@@ -4,6 +4,8 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
 int leftlinesensorPin = 12;
 int rightlinesensorPin = 11; // Connect sensor to input pin 3
+int leftjunctionsensorPin = 10;
+int rightjunctionsensorPin = 13;
  
  Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
 // You can also make another motor on port M2
@@ -23,7 +25,8 @@ void setup() {
 }
 
 int JunctionSense(){
-  return 0;
+  int Junct = digitalRead(leftjunctionsensorPin) + digitalRead(rightjunctionsensorPin);
+  return Junct;
 }
 void MoveToNextJunction(){
   do {
