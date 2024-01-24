@@ -2,6 +2,8 @@
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
+// ######################################### SETUP #################################
+
 int leftlinesensorPin = 12;
 int rightlinesensorPin = 11; // Connect sensor to input pin 3
 int leftjunctionsensorPin = 10;
