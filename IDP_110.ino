@@ -23,10 +23,13 @@ void setup() {
  pinMode(rightlinesensorPin, INPUT); // declare Micro switch as input
 }
 
+// ############################################ FUNCTIONS ###########################
+
 int JunctionSense(){
   int Junct = digitalRead(leftjunctionsensorPin) + digitalRead(rightjunctionsensorPin);
   return Junct;
 }
+
 void MoveToNextJunction(){
   do {
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
@@ -44,6 +47,8 @@ void MoveToNextJunction(){
  delay(100);
   } while (JunctionSense == 0);
 };
+
+// ############################# MAIN LOOP ########################
 
 void loop(){
  MoveToNextJunction();
