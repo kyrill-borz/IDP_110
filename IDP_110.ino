@@ -21,8 +21,13 @@ void setup() {
  pinMode(leftlinesensorPin, INPUT); // declare LED as output
  pinMode(rightlinesensorPin, INPUT); // declare Micro switch as input
 }
-void loop(){
- int valLeft = digitalRead(leftlinesensorPin); // read left input value
+
+int JunctionSense(){
+  return 0;
+}
+void MoveToNextJunction(){
+  do {
+  int valLeft = digitalRead(leftlinesensorPin); // read left input value
  Serial.print(valLeft);
  RightMotor->run(BACKWARD);
     RightMotor->setSpeed(valLeft*200);
@@ -35,4 +40,9 @@ void loop(){
         LeftMotor->setSpeed(valRight*200);
         delay(10);
  delay(100);
-}
+  } while (JunctionSense == 0);
+};
+
+void loop(){
+ MoveToNextJunction();
+};
