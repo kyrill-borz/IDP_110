@@ -7,9 +7,8 @@ int rightlinesensorPin = 11; // Connect sensor to input pin 3
 int leftjunctionsensorPin = 10;
 int rightjunctionsensorPin = 13;
  
- Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
-// You can also make another motor on port M2
-  Adafruit_DCMotor *RightMotor = AFMS.getMotor(2);
+Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
+Adafruit_DCMotor *RightMotor = AFMS.getMotor(2);
   
 
 void setup() {
