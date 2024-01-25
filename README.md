@@ -14,8 +14,16 @@ Summary of each function
 
 ### Line Follower
 
+If line is on the left, go more right. If line is on the right, go more left. Stop every time a junction is detected.
+
 ### Path finder
+
+Return an array of junction instructions, and then give the robot that instruction every time a junction is detected.
 
 ### Block Pick Up
 
+Close arms on block until the block is sensed, then detect what block it is.
+
 ### Deliver the Block
+
+Path finder to one of two locations
