@@ -1,4 +1,5 @@
 #include <Adafruit_MotorShield.h>
+#include <Servo.h>
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
@@ -8,10 +9,12 @@ int leftlinesensorPin = 12;
 int rightlinesensorPin = 11; // Connect sensor to input pin 3
 int leftjunctionsensorPin = 10;
 int rightjunctionsensorPin = 13;
- 
+int crashswitchPin = 3; 
+
 Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
 Adafruit_DCMotor *RightMotor = AFMS.getMotor(2);
-  
+
+Servo armServo; // create servo object to control a servo
 
 void setup() {
  
@@ -23,6 +26,8 @@ void setup() {
  Serial.begin(9600); // Init the serial port
  pinMode(leftlinesensorPin, INPUT); // declare LED as output
  pinMode(rightlinesensorPin, INPUT); // declare Micro switch as input
+ armServo.attach(9); // attaches the servo on pin 9 to the servo object
+ pinMode(crashswitchPin, INPUT);
 }
 
 // ############################################ FUNCTIONS ###########################
@@ -30,6 +35,16 @@ void setup() {
 int JunctionSense(){
   int Junct = digitalRead(leftjunctionsensorPin) + digitalRead(rightjunctionsensorPin);
   return Junct;
+}
+
+void PickUpBlock(){
+  int positionofservo = 0;
+  do {
+    positionofservo += 1;
+    armServo.write(positionofservo);
+    delay(15);
+  } while (digitalRead(crashswitchPin) == LOW);
+  
 }
 
 void MoveToNextJunction(){
