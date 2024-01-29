@@ -46,6 +46,23 @@ void PickUpBlock(){
   } while (digitalRead(crashswitchPin) == LOW);
   
 }
+
+void FindBlock(){
+
+}
+
+void IdentifyBlock(){
+  
+}
+
+void DropOffBlock(){
+
+}
+
+void ReturnToDepo(){
+  
+}
+
 void generatePath(){
 
 };
@@ -77,7 +94,6 @@ void stopLeftTurn(){  //functions called by Interrupts
 void stopRightTurn(){
   turningRight = 0;
 }
-
 
 void MoveToNextJunction(){
   do {
@@ -119,5 +135,9 @@ void loop(){
   detachInterrupt(digitalPinToInterrupt(leftForward)); //interrupts triggered by front line sensors to stop turning
   detachInterrupt(digitalPinToInterrupt(rightForward));
  }
- 
+ FindBlock();
+ PickUpBlock();
+ IdentifyBlock();
+ DropOffBlock();
+ ReturnToDepo();
 };
