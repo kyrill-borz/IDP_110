@@ -46,6 +46,29 @@ void PickUpBlock(){
   } while (digitalRead(crashswitchPin) == LOW);
   
 }
+void generatePath(){
+
+};
+
+void turnLeft(){ //adjust turning functions to match motor orientations
+  turningLeft = 1;
+  while(turningLeft == 1){
+    RightMotor->run(FORWARD);
+    RightMotor->setSpeed(200);
+    LeftMotor->run(BACKWARD);
+    LeftMotor->setSpeed(200);
+  }
+}
+
+void turnRight(){
+  turningRight = 1;
+  while(turningLeft == 1){
+    LeftMotor->run(FORWARD);
+    LeftMotor->setSpeed(200);
+    RightMotor->run(BACKWARD);
+    RightMotor->setSpeed(200);
+  }
+}
 
 void MoveToNextJunction(){
   do {
@@ -68,5 +91,24 @@ void MoveToNextJunction(){
 // ############################# MAIN LOOP ########################
 
 void loop(){
- MoveToNextJunction();
+ list int path = generatePath();
+ int directionsLength = path.size();
+ for (int i = 0, i <= directionsLength, i++){
+  MoveToNextJunction();
+
+  attachInterrupt(digitalPinToInterrupt(leftForward),stopRightTurn,FALLING); //interrupts triggered by front line sensors to stop turning
+  attachInterrupt(digitalPinToInterrupt(rightForward),stopLeftTurn,FALLING);
+
+  if (path[i] == "L"){
+    turnLeft();
+  } else if (path[i] == "R"){
+    turnRight();
+  } else {
+    cout << "continue straight"
+  };
+
+  detachInterrupt(digitalPinToInterrupt(leftForward)); //interrupts triggered by front line sensors to stop turning
+  detachInterrupt(digitalPinToInterrupt(rightForward));
+ }
+ 
 };
