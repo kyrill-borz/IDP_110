@@ -96,8 +96,8 @@ void loop(){
  for (int i = 0, i <= directionsLength, i++){
   MoveToNextJunction();
 
-  attachInterrupt(digitalPinToInterrupt(leftForward),stopRightTurn,FALLING); //interrupts triggered by front line sensors to stop turning
-  attachInterrupt(digitalPinToInterrupt(rightForward),stopLeftTurn,FALLING);
+  attachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin),stopRightTurn,FALLING); //interrupts triggered by front line sensors to stop turning
+  attachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin),stopLeftTurn,FALLING);
 
   if (path[i] == "L"){
     turnLeft();
