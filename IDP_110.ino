@@ -11,6 +11,9 @@ int leftjunctionsensorPin = 10;
 int rightjunctionsensorPin = 13;
 int crashswitchPin = 3; 
 
+int turningLeft;
+int turningRight;
+
 Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
 Adafruit_DCMotor *RightMotor = AFMS.getMotor(2);
 
@@ -26,6 +29,8 @@ void setup() {
  Serial.begin(9600); // Init the serial port
  pinMode(leftlinesensorPin, INPUT); // declare LED as output
  pinMode(rightlinesensorPin, INPUT); // declare Micro switch as input
+ pinMode(leftjunctionsensorPin, INPUT);
+ pinMode(rightjunctionsensorPin, INPUT);
  armServo.attach(9); // attaches the servo on pin 9 to the servo object
  pinMode(crashswitchPin, INPUT);
 }
