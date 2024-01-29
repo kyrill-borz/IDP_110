@@ -68,7 +68,16 @@ void turnRight(){
     RightMotor->run(BACKWARD);
     RightMotor->setSpeed(200);
   }
+};
+
+void stopLeftTurn(){  //functions called by Interrupts
+  turningLeft = 0;
 }
+
+void stopRightTurn(){
+  turningRight = 0;
+}
+
 
 void MoveToNextJunction(){
   do {
