@@ -11,6 +11,7 @@ int rightlinesensorPin = 11;
 int leftjunctionsensorPin = 10;
 int rightjunctionsensorPin = 13;
 int crashswitchPin = 3; 
+int pushButton = 7;
 
 // Store variables for turning
 int turningLeft;
