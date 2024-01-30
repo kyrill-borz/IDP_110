@@ -14,6 +14,7 @@ int rightlinesensorPin = 11;
 int leftjunctionsensorPin = 10;
 int rightjunctionsensorPin = 13;
 int crashswitchPin = 3; 
+int pushButton = 7;
 
 // Store variables for turning
 int turningLeft;
@@ -40,6 +41,7 @@ void setup() {
  pinMode(leftjunctionsensorPin, INPUT);
  pinMode(rightjunctionsensorPin, INPUT);
  pinMode(crashswitchPin, INPUT);
+ pinMode(pushButton, INPUT);
  armServo.attach(9); // attaches the servo on pin 9 to the servo object
 }
 

@@ -2,7 +2,7 @@
 
 ## How to store code
 
-Each function should be in it's own .cpp file, and then imported into the main thing, so that unit testing can work
+Each function should be in it's own .cpp/.ino file, and then incorporated into the main file, so that unit testing can work
 
 ## How the code should work
 
