@@ -1,5 +1,8 @@
 #include <Adafruit_MotorShield.h>
 #include <Servo.h>
+#include <iostream>
+#include <list>
+using namespace std;
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
@@ -15,6 +18,7 @@ int crashswitchPin = 3;
 // Store variables for turning
 int turningLeft;
 int turningRight;
+list<String> directions[] = {"L","R"};
 
 // Define Motors
 Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
@@ -72,8 +76,8 @@ void ReturnToDepo(){
   
 }
 
-void generatePath(){
-
+void generatePath(double* directions){
+  directions = {"L", "R", "L", "C"};
 };
 
 void turnLeft(){ //adjust turning functions to match motor orientations
@@ -125,9 +129,9 @@ void MoveToNextJunction(){
 // ############################# MAIN LOOP ########################
 
 void loop(){
- list String path = generatePath(); //gets a list of directions
+ String path[] = generatePath(); //gets a list of directions
  int directionsLength = path.size();
- for (int i = 0, i <= directionsLength, i++){ //Loops through each direction until the block is reached
+ for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
   MoveToNextJunction(); // follows the line to next junction
 
   attachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin),stopRightTurn,FALLING); //interrupts triggered by front line sensors to stop turning
@@ -138,11 +142,11 @@ void loop(){
   } else if (path[i] == "R"){
     turnRight();
   } else {
-    cout << "continue straight"
+    //cout << "continue straight"
   };
 
-  detachInterrupt(digitalPinToInterrupt(leftForward)); //interrupts triggered by front line sensors to stop turning
-  detachInterrupt(digitalPinToInterrupt(rightForward));
+  detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
+  detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
  }
  // Deals with the block and returns to the start before generating the next path
  FindBlock();
