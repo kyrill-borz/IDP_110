@@ -37,6 +37,7 @@ void setup() {
  pinMode(leftjunctionsensorPin, INPUT);
  pinMode(rightjunctionsensorPin, INPUT);
  pinMode(crashswitchPin, INPUT);
+ pinMode(pushButton, INPUT);
  armServo.attach(9); // attaches the servo on pin 9 to the servo object
 }
 
