@@ -14,7 +14,7 @@ int rightlinesensorPin = 8;
 int leftjunctionsensorPin = 10;
 int rightjunctionsensorPin = 7;
 int crashswitchPin = 3; 
-int pushButton = 7;
+int pushButton = 5;
 
 // Store variables for turning
 int turningLeft;
@@ -146,30 +146,35 @@ void MoveToNextJunction(){
 
 void loop(){
 //  //String path[] = generatePath(); //gets a list of directions
-  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
-   while (buttonPressed){ 
-  String path[] = {"R", "R", "R", "R"};
-  int directionsLength = 2; //path.size();
-  for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
-    MoveToNextJunction(); // follows the line to next junction
-    attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
-    attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
-   if (path[i] == "L"){ // decides what to do at each junction
-     turnLeft();
-   } else if (path[i] == "R"){
-     turnRight();
-   } else {
-     //cout << "continue straight"
-   };
-
-   detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
-   detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
+  //attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
+  //while (buttonPressed){ 
+  int buttonValue = digitalRead(pushButton);
+  while (buttonValue == LOW){
+    buttonValue = digitalRead(pushButton);
   }
- // Deals with the block and returns to the start before generating the next path
- FindBlock();
- PickUpBlock();
- IdentifyBlock();
- DropOffBlock();
- ReturnToDepo();
-   }
+  while (buttonValue == LOW){ 
+    String path[] = {"R", "R", "R", "R"};
+    int directionsLength = 2; //path.size();
+    for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
+      MoveToNextJunction(); // follows the line to next junction
+      attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
+      attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
+    if (path[i] == "L"){ // decides what to do at each junction
+      turnLeft();
+    } else if (path[i] == "R"){
+      turnRight();
+    } else {
+      //cout << "continue straight"
+    };
+
+    detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
+    detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
+    }
+  // Deals with the block and returns to the start before generating the next path
+    FindBlock();
+    PickUpBlock();
+    IdentifyBlock();
+    DropOffBlock();
+    ReturnToDepo();
+  }
 };
