@@ -22,6 +22,9 @@ int turningRight;
 int JunctionStatus = 0;
 String directions[] = {"L","R"};
 
+// Variable to check if button has been pressed
+bool buttonPressed = false;
+
 // Define Motors
 Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
 Adafruit_DCMotor *RightMotor = AFMS.getMotor(2);
@@ -51,6 +54,10 @@ void setup() {
 int JunctionSense(){
   int Junct = digitalRead(leftjunctionsensorPin) + digitalRead(rightjunctionsensorPin); //Sees whether junction has been hit
   return Junct;
+}
+
+void SwitchButtonState(){
+  buttonPressed = not buttonPressed;
 }
 
 void PickUpBlock(){
