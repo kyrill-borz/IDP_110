@@ -25,6 +25,7 @@ String directions[] = {"L","R"};
 // Variable to check if button has been pressed
 bool buttonPressed = false;
 
+
 // Define Motors
 Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
 Adafruit_DCMotor *RightMotor = AFMS.getMotor(2);
@@ -59,6 +60,7 @@ int JunctionSense(){
 void SwitchButtonState(){
   buttonPressed = not buttonPressed;
 }
+
 
 void PickUpBlock(){
   int positionofservo = 0; //resets servo angle
@@ -144,6 +146,8 @@ void MoveToNextJunction(){
 
 void loop(){
 //  //String path[] = generatePath(); //gets a list of directions
+  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
+   while (buttonPressed){ 
   String path[] = {"R", "R", "R", "R"};
   int directionsLength = 2; //path.size();
   for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
@@ -167,4 +171,5 @@ void loop(){
  IdentifyBlock();
  DropOffBlock();
  ReturnToDepo();
+   }
 };
