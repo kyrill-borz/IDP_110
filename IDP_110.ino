@@ -1,7 +1,7 @@
 #include <Adafruit_MotorShield.h>
 #include <Servo.h>
-#include <iostream>
-#include <list>
+#include <stdlib.h>
+//#include <list>
 using namespace std;
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
@@ -9,17 +9,18 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 // ######################################### SETUP #################################
 
 // Calibrate input pins
-int leftlinesensorPin = 12;
-int rightlinesensorPin = 11; 
+int leftlinesensorPin = 9;
+int rightlinesensorPin = 8; 
 int leftjunctionsensorPin = 10;
-int rightjunctionsensorPin = 13;
+int rightjunctionsensorPin = 7;
 int crashswitchPin = 3; 
 int pushButton = 7;
 
 // Store variables for turning
 int turningLeft;
 int turningRight;
-list<String> directions[] = {"L","R"};
+int JunctionStatus = 0;
+String directions[] = {"L","R"};
 
 // Define Motors
 Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
@@ -78,27 +79,30 @@ void ReturnToDepo(){
   
 }
 
-void generatePath(double* directions){
-  directions = {"L", "R", "L", "C"};
-};
+//void generatePath(double* directions){
+//  directions = {"L", "R", "L", "C"};
+//};
 
 void turnLeft(){ //adjust turning functions to match motor orientations
   turningLeft = 1;
   while(turningLeft == 1){ // defines a loop for turning to the left until interrupt is hit
-    RightMotor->run(FORWARD);
-    RightMotor->setSpeed(200);
+    RightMotor->run(BACKWARD);
+    RightMotor->setSpeed(170);
     LeftMotor->run(BACKWARD);
     LeftMotor->setSpeed(200);
   }
 }
 
 void turnRight(){ 
+  LeftMotor->run(FORWARD);
+  RightMotor->run(BACKWARD);
+  delay(200);
   turningRight = 1;
-  while(turningLeft == 1){ // defines a loop for turning to the right until interrupt is hit
+  while(turningRight == 1){ // defines a loop for turning to the right until interrupt is hit
     LeftMotor->run(FORWARD);
     LeftMotor->setSpeed(200);
-    RightMotor->run(BACKWARD);
-    RightMotor->setSpeed(200);
+    RightMotor->run(FORWARD);
+    RightMotor->setSpeed(170);
   }
 };
 
@@ -112,10 +116,11 @@ void stopRightTurn(){
 
 void MoveToNextJunction(){
   do {
+    JunctionStatus = JunctionSense();
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
  Serial.print(valLeft);
  RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-    RightMotor->setSpeed(valLeft*200);
+    RightMotor->setSpeed(valLeft*170);
     delay(10); // need to test if delay is necessary
 
 
@@ -125,31 +130,30 @@ void MoveToNextJunction(){
         LeftMotor->setSpeed(valRight*200);
         delay(10);
  delay(100);
-  } while (JunctionSense == 0); // stops when a junction is hit
+  } while (JunctionStatus == 0); // stops when a junction is hit
 };
 
 // ############################# MAIN LOOP ########################
 
 void loop(){
- String path[] = generatePath(); //gets a list of directions
- int directionsLength = path.size();
- for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
-  MoveToNextJunction(); // follows the line to next junction
+//  //String path[] = generatePath(); //gets a list of directions
+  String path[] = {"R", "R", "R", "R"};
+  int directionsLength = 2; //path.size();
+  for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
+    MoveToNextJunction(); // follows the line to next junction
+    attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
+    attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
+   if (path[i] == "L"){ // decides what to do at each junction
+     turnLeft();
+   } else if (path[i] == "R"){
+     turnRight();
+   } else {
+     //cout << "continue straight"
+   };
 
-  attachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin),stopRightTurn,FALLING); //interrupts triggered by front line sensors to stop turning
-  attachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin),stopLeftTurn,FALLING);
-
-  if (path[i] == "L"){ // decides what to do at each junction
-    turnLeft();
-  } else if (path[i] == "R"){
-    turnRight();
-  } else {
-    //cout << "continue straight"
-  };
-
-  detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
-  detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
- }
+   detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
+   detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
+  }
  // Deals with the block and returns to the start before generating the next path
  FindBlock();
  PickUpBlock();
