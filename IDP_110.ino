@@ -14,7 +14,7 @@ int rightlinesensorPin = 8;
 int leftjunctionsensorPin = 10;
 int rightjunctionsensorPin = 7;
 int crashswitchPin = 3; 
-int pushButton = 7;
+int pushButton = 5;
 
 // Store variables for turning
 int turningLeft;
@@ -92,26 +92,48 @@ void ReturnToDepo(){
 //  directions = {"L", "R", "L", "C"};
 //};
 
+// void turnLeft(){//adjust turning functions to match motor orientations
+// delay(400);
+//  RightMotor->run(BACKWARD);
+//  RightMotor->setSpeed(140);
+//  LeftMotor->run(BACKWARD);
+//  LeftMotor->setSpeed(200);
+//  delay(1500);
+//  RightMotor->setSpeed(0);
+//  LeftMotor->setSpeed(0);
+//  delay(700);
+// }
+// void turnRight(){
+//   delay(400);
+//  LeftMotor->run(FORWARD);
+//  LeftMotor->setSpeed(200);
+//  RightMotor->run(FORWARD);
+//  RightMotor->setSpeed(140);
+//  delay(1500);
+//  RightMotor->setSpeed(0);
+//  LeftMotor->setSpeed(0);
+//  delay(700);
+// }
+
 void turnLeft(){ //adjust turning functions to match motor orientations
+  delay(400);
   turningLeft = 1;
   while(turningLeft == 1){ // defines a loop for turning to the left until interrupt is hit
     RightMotor->run(BACKWARD);
-    RightMotor->setSpeed(170);
+    RightMotor->setSpeed(150);
     LeftMotor->run(BACKWARD);
     LeftMotor->setSpeed(200);
   }
 }
 
 void turnRight(){ 
-  LeftMotor->run(FORWARD);
-  RightMotor->run(BACKWARD);
-  delay(200);
+  delay(400);
   turningRight = 1;
   while(turningRight == 1){ // defines a loop for turning to the right until interrupt is hit
     LeftMotor->run(FORWARD);
     LeftMotor->setSpeed(200);
     RightMotor->run(FORWARD);
-    RightMotor->setSpeed(170);
+    RightMotor->setSpeed(150);
   }
 };
 
@@ -129,7 +151,7 @@ void MoveToNextJunction(){
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
  Serial.print(valLeft);
  RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-    RightMotor->setSpeed(valLeft*170);
+    RightMotor->setSpeed(valLeft*160);
     delay(10); // need to test if delay is necessary
 
 
@@ -146,20 +168,22 @@ void MoveToNextJunction(){
 
 void loop(){
 //  //String path[] = generatePath(); //gets a list of directions
-  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
-   while (buttonPressed){ 
-  String path[] = {"R", "R", "R", "R"};
-  int directionsLength = 2; //path.size();
+  // attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,HIGH);
+  //  while (TRUE){ 
+  String path[] = {"L", "L", "F", "R", "L"};
+  int directionsLength = 5; //path.size();
   for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
     MoveToNextJunction(); // follows the line to next junction
     attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
     attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
    if (path[i] == "L"){ // decides what to do at each junction
      turnLeft();
+     delay(100);
    } else if (path[i] == "R"){
      turnRight();
+     delay(100);
    } else {
-     //cout << "continue straight"
+     delay(300);
    };
 
    detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
@@ -171,5 +195,5 @@ void loop(){
  IdentifyBlock();
  DropOffBlock();
  ReturnToDepo();
-   }
+   //}
 };
