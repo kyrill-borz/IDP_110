@@ -1,7 +1,8 @@
 #include <Adafruit_MotorShield.h>
 #include <Servo.h>
 #include <stdlib.h>
-//#include <list>
+#include "pathfinding.h"
+
 using namespace std;
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
@@ -120,8 +121,8 @@ void turnLeft(){ //adjust turning functions to match motor orientations
   turningLeft = 1;
   while(turningLeft == 1){ // defines a loop for turning to the left until interrupt is hit
     RightMotor->run(BACKWARD);
-    RightMotor->setSpeed(150);
-    LeftMotor->run(BACKWARD);
+    RightMotor->setSpeed(200);
+    LeftMotor->run(FORWARD);
     LeftMotor->setSpeed(200);
   }
 }
@@ -130,10 +131,10 @@ void turnRight(){
   delay(400);
   turningRight = 1;
   while(turningRight == 1){ // defines a loop for turning to the right until interrupt is hit
-    LeftMotor->run(FORWARD);
+    LeftMotor->run(BACKWARD);
     LeftMotor->setSpeed(200);
     RightMotor->run(FORWARD);
-    RightMotor->setSpeed(150);
+    RightMotor->setSpeed(200);
   }
 };
 
@@ -151,13 +152,13 @@ void MoveToNextJunction(){
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
  Serial.print(valLeft);
  RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-    RightMotor->setSpeed(valLeft*160);
+    RightMotor->setSpeed(valLeft*200);
     delay(10); // need to test if delay is necessary
 
 
  int valRight = digitalRead(rightlinesensorPin); // read right input value
  Serial.print(valRight);
-    LeftMotor->run(FORWARD); // if left sensor is on the white line, turn the right wheel on
+    LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
         LeftMotor->setSpeed(valRight*200);
         delay(10);
  delay(100);
