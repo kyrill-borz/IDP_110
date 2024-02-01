@@ -168,13 +168,8 @@ void MoveToNextJunction(){
 
 void loop(){
 //  //String path[] = generatePath(); //gets a list of directions
-  //attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
-  //while (buttonPressed){ 
-  int buttonValue = digitalRead(pushButton);
-  while (buttonValue == LOW){
-    buttonValue = digitalRead(pushButton);
-  }
-  while (buttonValue == LOW){ 
+  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
+  if (buttonPressed) { 
     String path[] = {"L", "L", "F", "R", "L"};
     int directionsLength = 5; //path.size();
     for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
