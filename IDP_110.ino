@@ -89,35 +89,8 @@ void ReturnToDepo(){
   
 }
 
-//void generatePath(double* directions){
-//  directions = {"L", "R", "L", "C"};
-//};
-
-// void turnLeft(){//adjust turning functions to match motor orientations
-// delay(400);
-//  RightMotor->run(BACKWARD);
-//  RightMotor->setSpeed(140);
-//  LeftMotor->run(BACKWARD);
-//  LeftMotor->setSpeed(200);
-//  delay(1500);
-//  RightMotor->setSpeed(0);
-//  LeftMotor->setSpeed(0);
-//  delay(700);
-// }
-// void turnRight(){
-//   delay(400);
-//  LeftMotor->run(FORWARD);
-//  LeftMotor->setSpeed(200);
-//  RightMotor->run(FORWARD);
-//  RightMotor->setSpeed(140);
-//  delay(1500);
-//  RightMotor->setSpeed(0);
-//  LeftMotor->setSpeed(0);
-//  delay(700);
-// }
-
 void turnLeft(){ //adjust turning functions to match motor orientations
-  delay(400);
+  delay(100);
   turningLeft = 1;
   while(turningLeft == 1){ // defines a loop for turning to the left until interrupt is hit
     RightMotor->run(BACKWARD);
@@ -128,7 +101,7 @@ void turnLeft(){ //adjust turning functions to match motor orientations
 }
 
 void turnRight(){ 
-  delay(400);
+  delay(100);
   turningRight = 1;
   while(turningRight == 1){ // defines a loop for turning to the right until interrupt is hit
     LeftMotor->run(BACKWARD);
@@ -171,16 +144,17 @@ void loop(){
 //  //String path[] = generatePath(); //gets a list of directions
   attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
   if (buttonPressed) { 
-    String path[] = {"L", "L", "F", "R", "L"};
-    int directionsLength = 5; //path.size();
+    //String path[] = {"L", "L", "F", "R", "L"};
+    String path = ConvertToLocalPath(GetPathToTarget(0, 9));
+    int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
       attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
       attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
-    if (path[i] == "L"){ // decides what to do at each junction
+    if (path[i] == 'L'){ // decides what to do at each junction
       turnLeft();
       delay(100);
-    } else if (path[i] == "R"){
+    } else if (path[i] == 'R'){
       turnRight();
       delay(100);
     } else {
