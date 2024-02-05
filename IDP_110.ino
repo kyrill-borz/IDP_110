@@ -1,17 +1,35 @@
 #include <Adafruit_MotorShield.h>
 #include <Servo.h>
 #include <stdlib.h>
-#include "pathfinding/pathfinding.hpp"
-#include "PinDefinitions/pindefinitions.h"
-#include "Movement/movement.hpp"
+#include "Pathfinding/pathfinding.hpp"
 
 using namespace std;
 
+Adafruit_MotorShield AFMS = Adafruit_MotorShield();
+
 // ######################################### SETUP #################################
 
+// Calibrate input pins
+int leftlinesensorPin = 9;
+int rightlinesensorPin = 8; 
+int leftjunctionsensorPin = 10;
+int rightjunctionsensorPin = 7;
+int crashswitchPin = 3; 
+int pushButton = 5;
+
+// Store variables for turning
+int turningLeft;
+int turningRight;
+int JunctionStatus = 0;
+String directions[] = {"L","R"};
 
 // Variable to check if button has been pressed
 bool buttonPressed = false;
+
+
+// Define Motors
+Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
+Adafruit_DCMotor *RightMotor = AFMS.getMotor(2);
 
 Servo armServo; // create servo object to control a servo
 
@@ -23,24 +41,27 @@ void setup() {
     while (1);
   }
  Serial.begin(9600); // Init the serial port
-
  // Declare Input pins
-
  pinMode(leftlinesensorPin, INPUT); 
  pinMode(rightlinesensorPin, INPUT); 
  pinMode(leftjunctionsensorPin, INPUT);
  pinMode(rightjunctionsensorPin, INPUT);
  pinMode(crashswitchPin, INPUT);
  pinMode(pushButton, INPUT);
-
  armServo.attach(9); // attaches the servo on pin 9 to the servo object
 }
 
 // ############################################ FUNCTIONS ###########################
 
+int JunctionSense(){
+  int Junct = digitalRead(leftjunctionsensorPin) + digitalRead(rightjunctionsensorPin); //Sees whether junction has been hit
+  return Junct;
+}
+
 void SwitchButtonState(){
   buttonPressed = not buttonPressed;
 }
+
 
 void PickUpBlock(){
   int positionofservo = 0; //resets servo angle
@@ -68,12 +89,61 @@ void ReturnToDepo(){
   
 }
 
+void turnLeft(){ //adjust turning functions to match motor orientations
+  delay(100);
+  turningLeft = 1;
+  while(turningLeft == 1){ // defines a loop for turning to the left until interrupt is hit
+    RightMotor->run(BACKWARD);
+    RightMotor->setSpeed(200);
+    LeftMotor->run(FORWARD);
+    LeftMotor->setSpeed(200);
+  }
+}
+
+void turnRight(){ 
+  delay(100);
+  turningRight = 1;
+  while(turningRight == 1){ // defines a loop for turning to the right until interrupt is hit
+    LeftMotor->run(BACKWARD);
+    LeftMotor->setSpeed(200);
+    RightMotor->run(FORWARD);
+    RightMotor->setSpeed(200);
+  }
+};
+
+void stopLeftTurn(){  //functions called by Interrupts
+  turningLeft = 0;
+}
+
+void stopRightTurn(){
+  turningRight = 0;
+}
+
+void MoveToNextJunction(){
+  do {
+    JunctionStatus = JunctionSense();
+  int valLeft = digitalRead(leftlinesensorPin); // read left input value
+ Serial.print(valLeft);
+ RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
+    RightMotor->setSpeed(valLeft*200);
+     // need to test if delay is necessary
+
+
+ int valRight = digitalRead(rightlinesensorPin); // read right input value
+ Serial.print(valRight);
+    LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
+        LeftMotor->setSpeed(valRight*200);
+ delay(100);
+  } while (JunctionStatus == 0); // stops when a junction is hit
+};
+
 // ############################# MAIN LOOP ########################
 
 void loop(){
 //  //String path[] = generatePath(); //gets a list of directions
   attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
-  //if (buttonPressed) { 
+  if (buttonPressed) { 
+    //String path[] = {"L", "L", "F", "R", "L"};
     String path = ConvertToLocalPath(GetPathToTarget(0, 9));
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
@@ -93,14 +163,11 @@ void loop(){
     detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
     detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
     }
-    RightMotor->setSpeed(0);
-    LeftMotor->setSpeed(0);
-
   // Deals with the block and returns to the start before generating the next path
     FindBlock();
     PickUpBlock();
     IdentifyBlock();
     DropOffBlock();
     ReturnToDepo();
-  //}
+  }
 };
