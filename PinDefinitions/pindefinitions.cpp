@@ -5,3 +5,4 @@ int leftjunctionsensorPin = 10;
 int rightjunctionsensorPin = 7;
 int crashswitchPin = 3; 
 int pushButton = 5;
+int ledPin = 4;

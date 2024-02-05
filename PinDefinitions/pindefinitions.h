@@ -1,11 +1,12 @@
 #ifndef PINDEFINITIONS_H
 #define PINDEFINITIONS_H
 
-extern int leftlinesensorPin;
-extern int rightlinesensorPin; 
-extern int leftjunctionsensorPin;
-extern int rightjunctionsensorPin;
-extern int crashswitchPin; 
-extern int pushButton;
+const int leftlinesensorPin;
+const int rightlinesensorPin; 
+const int leftjunctionsensorPin;
+const int rightjunctionsensorPin;
+const int crashswitchPin; 
+const int pushButton;
+const int ledPin;
 
 #endif
