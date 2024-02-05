@@ -8,7 +8,7 @@ using namespace std;
 // Pathfinding: Pass current location and desired location as arguments to GetPathToTarget
 const int huge = 10000;
 int currentHeading = 0;
-class Vector2 {
+class Vector2 { // vector2
   public:
     int X,Y;
 
@@ -59,7 +59,7 @@ Node nodes[numNodes] {
   {15, Vector2(63, 123), -1, 10, -1, 11}
 };
 
-String GetPathToTarget(int startIndex, int endIndex) {
+String GetPathToTarget(int startIndex, int endIndex) { // get the world space path from 2 nodes
   bool closedList[numNodes] = {false};
   int currentIndex;
 
@@ -132,7 +132,7 @@ String GetPathToTarget(int startIndex, int endIndex) {
     }
   }
 }
-String ConvertToLocalPath(String path) {
+String ConvertToLocalPath(String path) { // convert the path from world to local space
   // loop over the path
   int current = currentHeading;
   String LRC = "";
@@ -159,7 +159,7 @@ String ConvertToLocalPath(String path) {
   return LRC;
 }
 
-void SetHeadingFromPath(String path) {
+void SetHeadingFromPath(String path) { // set the final heading following a path
     // set the new current heading
   for (int i = 0; i < path.length(); i++) {
     if (path[i] == 'L') {SetCurrentHeading(currentHeading - 90);}
@@ -167,8 +167,7 @@ void SetHeadingFromPath(String path) {
     else if (path[i] == 'B') {SetCurrentHeading(currentHeading + 180);}
   }
 }
-
-void SetCurrentHeading(int heading) {
+void SetCurrentHeading(int heading) { // set the current heading 
   currentHeading = heading;
   currentHeading = heading%360;
   if (abs(currentHeading) > 180) {currentHeading = currentHeading-(360 * (heading/abs(heading)));}
