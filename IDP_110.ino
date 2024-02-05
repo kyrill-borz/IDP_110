@@ -21,7 +21,7 @@ int pushButton = 5;
 int turningLeft;
 int turningRight;
 int JunctionStatus = 0;
-String directions[] = {"L","R"};
+int BlockStatus = 0;
 
 // Variable to check if button has been pressed
 bool buttonPressed = false;
@@ -58,6 +58,9 @@ int JunctionSense(){
   return Junct;
 }
 
+int BlockSense(){
+  return 1;
+}
 void SwitchButtonState(){
   buttonPressed = not buttonPressed;
 }
@@ -71,10 +74,6 @@ void PickUpBlock(){
     delay(15);
   } while (digitalRead(crashswitchPin) == LOW);
   
-}
-
-void FindBlock(){
-
 }
 
 void IdentifyBlock(){
@@ -119,6 +118,23 @@ void stopRightTurn(){
   turningRight = 0;
 }
 
+void FindBlock(){
+  do {
+  BlockStatus = BlockSense();
+  int valLeft = digitalRead(leftlinesensorPin); // read left input value
+  Serial.print(valLeft);
+  RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
+    RightMotor->setSpeed(valLeft*200);
+     // need to test if delay is necessary
+
+
+ int valRight = digitalRead(rightlinesensorPin); // read right input value
+ Serial.print(valRight);
+    LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
+        LeftMotor->setSpeed(valRight*200);
+ //delay(1);
+  } while (BlockStatus == 0); // stops when a junction is hit
+};
 void MoveToNextJunction(){
   do {
     JunctionStatus = JunctionSense();
@@ -133,7 +149,7 @@ void MoveToNextJunction(){
  Serial.print(valRight);
     LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
         LeftMotor->setSpeed(valRight*200);
- delay(100);
+ //delay(1);
   } while (JunctionStatus == 0); // stops when a junction is hit
 };
 
@@ -146,7 +162,7 @@ void loop(){
     //String path[] = {"L", "L", "F", "R", "L"};
     String path = ConvertToLocalPath(GetPathToTarget(0, 9));
     int directionsLength = path.length(); //path.size();
-    for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
+    for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
       attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
       attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
@@ -159,6 +175,8 @@ void loop(){
     } else {
       delay(300);
     };
+    LeftMotor->setSpeed(0);
+    RightMotor->setSpeed(0);
 
     detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
     detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
