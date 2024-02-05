@@ -1,13 +1,11 @@
 #include <Adafruit_MotorShield.h>
 #include <Servo.h>
 #include <stdlib.h>
-#include "pathfinding\pathfinding.h"
-#include "PinDefinitions\pindefinitions.h"
-#include "Movement\movement.h"
+#include "pathfinding/pathfinding.hpp"
+#include "PinDefinitions/pindefinitions.h"
+#include "Movement/movement.hpp"
 
 using namespace std;
-
-Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
 // ######################################### SETUP #################################
 
@@ -95,6 +93,9 @@ void loop(){
     detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
     detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
     }
+    RightMotor->setSpeed(0);
+    LeftMotor->setSpeed(0);
+
   // Deals with the block and returns to the start before generating the next path
     FindBlock();
     PickUpBlock();
