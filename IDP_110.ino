@@ -73,7 +73,7 @@ void ReturnToDepo(){
 void loop(){
 //  //String path[] = generatePath(); //gets a list of directions
   attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
-  if (buttonPressed) { 
+  //if (buttonPressed) { 
     String path = ConvertToLocalPath(GetPathToTarget(0, 9));
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
@@ -102,5 +102,5 @@ void loop(){
     IdentifyBlock();
     DropOffBlock();
     ReturnToDepo();
-  }
+  //}
 };

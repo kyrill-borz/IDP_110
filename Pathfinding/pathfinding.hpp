@@ -157,6 +157,11 @@ String ConvertToLocalPath(String path) {
   
   return LRC;
 }
+void SetCurrentHeading(int heading) {
+  currentHeading = heading;
+  currentHeading = heading%360;
+  if (abs(currentHeading) > 180) {currentHeading = currentHeading-(360 * (heading/abs(heading)));}
+}
 
 void SetHeadingFromPath(String path) {
     // set the new current heading
@@ -167,11 +172,7 @@ void SetHeadingFromPath(String path) {
   }
 }
 
-void SetCurrentHeading(int heading) {
-  currentHeading = heading;
-  currentHeading = heading%360;
-  if (abs(currentHeading) > 180) {currentHeading = currentHeading-(360 * (heading/abs(heading)));}
-}
+
 // -- End Of Pathfinding Stuff 
 
 // void setup() 
