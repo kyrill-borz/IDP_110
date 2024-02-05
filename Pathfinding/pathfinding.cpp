@@ -155,8 +155,19 @@ String ConvertToLocalPath(String path) {
     // set the current angle
     current = targetAngle;
   }
+  
   return LRC;
 }
+
+void SetHeadingFromPath(String path) {
+    // set the new current heading
+  for (int i = 0; i < path.length(); i++) {
+    if (path[i] == 'L') {SetCurrentHeading(currentHeading - 90);}
+    else if (path[i] == 'R') {SetCurrentHeading(currentHeading + 90);}
+    else if (path[i] == 'B') {SetCurrentHeading(currentHeading + 180);}
+  }
+}
+
 void SetCurrentHeading(int heading) {
   currentHeading = heading;
   currentHeading = heading%360;
