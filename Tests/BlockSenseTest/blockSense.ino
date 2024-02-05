@@ -20,22 +20,14 @@ void setup() {
  sensor.start();
 }
 
-void senseBlock(){
-    initDist = sensor.getDistance();
-    Serial.print("initial distance:");
-    Serial.println(initDist,0);
-    delay(500);
-    while(distChange <= distToBlock){
-        currDist = sensor.getDistance();
-        if (currDist < initDist){
-            distChange = initDist - currDist;
-        }   
-        Serial.print("current distance:");
-        Serial.println(currDist,0);
-        delay(500);
+bool senseBlock(){ //
+    float blockDist = sensor.getDistance();
+    if(blockDist > 50){
+        return 0;
     }
-    Serial.println("block reached");
-    distChange = 0;
+    else{
+        return 1;
+    }
 }
 void loop(){
     senseBlock();
