@@ -66,27 +66,6 @@ void SwitchButtonState(){
 }
 
 
-void PickUpBlock(){
-  int positionofservo = 0; //resets servo angle
-  do {
-    positionofservo += 1;
-    armServo.write(positionofservo); // Keeps tightening servo arm until the block is grabbed
-    delay(15);
-  } while (digitalRead(crashswitchPin) == LOW);
-  
-}
-
-void IdentifyBlock(){
-  
-}
-
-void DropOffBlock(){
-
-}
-
-void ReturnToDepo(){
-  
-}
 
 void turnLeft(){ //adjust turning functions to match motor orientations
   delay(100);
@@ -152,6 +131,59 @@ void MoveToNextJunction(){
  //delay(1);
   } while (JunctionStatus == 0); // stops when a junction is hit
 };
+
+void PickUpBlock(){
+  int positionofservo = 0; //resets servo angle
+  do {
+    positionofservo += 1;
+    armServo.write(positionofservo); // Keeps tightening servo arm until the block is grabbed
+    delay(15);
+  } while (digitalRead(crashswitchPin) == LOW);
+  
+}
+
+void IdentifyBlock(){
+  
+}
+
+void DropOffBlock(){
+  LeftMotor->run(FORWARD);
+  RightMotor->run(FORWARD);
+  LeftMotor->setSpeed(100);
+  RightMotor->setSpeed(100);
+  delay(1000);
+  turnRight();
+  String path = ConvertToLocalPath(GetPathToTarget(9, 0));
+    int directionsLength = path.length(); //path.size();
+    for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
+      MoveToNextJunction(); // follows the line to next junction
+      attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
+      attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
+    if (path[i] == 'L'){ // decides what to do at each junction
+      turnLeft();
+      delay(100);
+    } else if (path[i] == 'R'){
+      turnRight();
+      delay(100);
+    } else {
+      delay(300);
+    };
+    LeftMotor->setSpeed(0);
+    RightMotor->setSpeed(0);
+
+    detachInterrupt(digitalPinToInterrupt(leftjunctionsensorPin)); //interrupts triggered by front line sensors to stop turning
+    detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
+    }
+  // Deals with the block and returns to the start before generating the next path
+    FindBlock();
+    PickUpBlock();
+    IdentifyBlock();
+    DropOffBlock();
+  }
+
+void ReturnToDepo(){
+  
+}
 
 // ############################# MAIN LOOP ########################
 
