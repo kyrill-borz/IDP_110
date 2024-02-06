@@ -2,11 +2,15 @@
 #include <Servo.h>
 #include <stdlib.h>
 #include "Pathfinding/pathfinding.hpp"
+#include "Wire.h"
+#include "DFRobot_VL53L0X.h"
+
 
 using namespace std;
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
+DFRobot_VL53L0X sensor;
 // ######################################### SETUP #################################
 
 // Calibrate input pins
@@ -41,7 +45,15 @@ void setup() {
     while (1);
   }
  Serial.begin(9600); // Init the serial port
- // Declare Input pins
+  // Declare Input pins
+  Wire.begin();
+  //Set I2C sub-device address
+  sensor.begin(0x50);
+  //Set to Back-to-back mode and high precision mode
+  sensor.setMode(sensor.eContinuous,sensor.eHigh);
+  //Laser rangefinder begins to work
+  sensor.start();
+  
  pinMode(leftlinesensorPin, INPUT); 
  pinMode(rightlinesensorPin, INPUT); 
  pinMode(leftjunctionsensorPin, INPUT);
@@ -65,10 +77,18 @@ void SwitchButtonState(){
   buttonPressed = not buttonPressed;
 }
 
-
+bool senseBlock(){ //
+    float blockDist = sensor.getDistance();
+    if(blockDist > 100){
+        return 0;
+    }
+    else{
+        return 1;
+    }
+}
 
 void turnLeft(){ //adjust turning functions to match motor orientations
-  delay(100);
+  delay(200);
   turningLeft = 1;
   while(turningLeft == 1){ // defines a loop for turning to the left until interrupt is hit
     RightMotor->run(BACKWARD);
@@ -79,7 +99,7 @@ void turnLeft(){ //adjust turning functions to match motor orientations
 }
 
 void turnRight(){ 
-  delay(100);
+  delay(200);
   turningRight = 1;
   while(turningRight == 1){ // defines a loop for turning to the right until interrupt is hit
     LeftMotor->run(BACKWARD);
@@ -99,7 +119,7 @@ void stopRightTurn(){
 
 void FindBlock(){
   do {
-  BlockStatus = BlockSense();
+  BlockStatus = senseBlock();
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
   Serial.print(valLeft);
   RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
@@ -133,12 +153,15 @@ void MoveToNextJunction(){
 };
 
 void PickUpBlock(){
+  LeftMotor->setSpeed(0);
+  RightMotor->setSpeed(0);
+
   int positionofservo = 0; //resets servo angle
   do {
     positionofservo += 1;
     armServo.write(positionofservo); // Keeps tightening servo arm until the block is grabbed
     delay(15);
-  } while (digitalRead(crashswitchPin) == LOW);
+  } while (positionofservo <= 100);
   
 }
 
@@ -151,9 +174,9 @@ void DropOffBlock(){
   RightMotor->run(FORWARD);
   LeftMotor->setSpeed(100);
   RightMotor->setSpeed(100);
-  delay(1000);
+  delay(600);
   turnRight();
-  String path = ConvertToLocalPath(GetPathToTarget(9, 0));
+  String path = ConvertToLocalPath(GetPathToTarget(3, 12));
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
@@ -192,7 +215,8 @@ void loop(){
   attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
   if (buttonPressed) { 
     //String path[] = {"L", "L", "F", "R", "L"};
-    String path = ConvertToLocalPath(GetPathToTarget(0, 9));
+    String path = ConvertToLocalPath(GetPathToTarget(0, 3));
+    SetCurrentHeading(180);
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
