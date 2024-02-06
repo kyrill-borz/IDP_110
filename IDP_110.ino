@@ -198,10 +198,6 @@ void DropOffBlock(){
     detachInterrupt(digitalPinToInterrupt(rightjunctionsensorPin));
     }
   // Deals with the block and returns to the start before generating the next path
-    FindBlock();
-    PickUpBlock();
-    IdentifyBlock();
-    DropOffBlock();
   }
 
 void ReturnToDepo(){
