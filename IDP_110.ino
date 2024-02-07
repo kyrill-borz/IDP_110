@@ -62,6 +62,7 @@ void setup() {
  pinMode(pushButton, INPUT);
  armServo.attach(armPin); // attaches the servo on pin 9 to the servo object
  gripServo.attach(grabberPin);
+ armServo.writeMicroseconds(500);
  attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
  attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
@@ -163,7 +164,15 @@ void PickUpBlock(){
   lowerArm(gripServo, armServo);
   grabBlock(gripServo, armServo);
   liftArm(gripServo, armServo);
-  
+}
+
+void PutDownBlock(){
+  LeftMotor->setSpeed(0);
+  RightMotor->setSpeed(0);  
+  lowerArm(gripServo, armServo);
+  dropBlock(gripServo, armServo);
+  resetLED(greenLedPin, redLedPin);
+  liftArm(gripServo, armServo);
 }
 
 void SpinAround(){
@@ -205,10 +214,7 @@ void DropOffBlock(int location){
     LeftMotor->setSpeed(0);
     RightMotor->setSpeed(0);
     }
-    lowerArm(gripServo, armServo);
-    dropBlock(gripServo, armServo);
-    resetLED(greenLedPin, redLedPin);
-    liftArm(gripServo, armServo);
+    PutDownBlock();
     SpinAround();
   // Deals with the block and returns to the start before generating the next path
   }
@@ -259,6 +265,7 @@ void ReturnToDepo(){
     RightMotor->setSpeed(0);
     }
     EnterDepo();
+    lowerArm(gripServo, armServo);
 }
 
 // ############################# MAIN LOOP ########################
@@ -270,6 +277,7 @@ void loop(){
   attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
   if (buttonPressed) { 
     Serial.print("Starting");
+    lowerArm(gripServo, armServo);
     LeaveBox();
     String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
     int directionsLength = path.length(); //path.size();

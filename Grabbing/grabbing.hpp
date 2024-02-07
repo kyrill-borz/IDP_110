@@ -4,7 +4,7 @@ void grabBlock(Servo grabber,Servo arm){ //use writeMicroseconds to drive servo 
 }
 
 void liftArm(Servo grabber,Servo arm){ 
-    arm.writeMicroseconds(1900);
+    arm.writeMicroseconds(1600);
 }
 
 void dropBlock(Servo grabber,Servo arm){
@@ -12,5 +12,5 @@ void dropBlock(Servo grabber,Servo arm){
 }
 
 void lowerArm(Servo grabber,Servo arm){
-    arm.writeMicroseconds(1000);
+    arm.writeMicroseconds(500);
 };
