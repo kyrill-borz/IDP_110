@@ -1,4 +1,3 @@
-#include <Servo.h>
 
 void grabBlock(Servo grabber,Servo arm){ //use writeMicroseconds to drive servo for a set time
     grabber.writeMicroseconds(2000);

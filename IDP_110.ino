@@ -4,7 +4,7 @@
 #include "Pathfinding/pathfinding.hpp"
 #include "PinDefinitions/pindefinitions.hpp"
 #include "Grabbing/grabbing.hpp"
-#include "LEDs/LEDs.hpp"
+//#include "LEDs/LEDs.hpp"
 #include "Wire.h"
 #include "DFRobot_VL53L0X.h"
 
@@ -158,13 +158,9 @@ void FindBlock(){
 void PickUpBlock(){
   LeftMotor->setSpeed(0);
   RightMotor->setSpeed(0);
-
-  int positionofservo = 0; //resets servo angle
-  do {
-    positionofservo += 1;
-    armServo.write(positionofservo); // Keeps tightening servo arm until the block is grabbed
-    delay(15);
-  } while (positionofservo <= 100);
+  lowerArm(gripServo, armServo);
+  grabBlock(gripServo, armServo);
+  liftArm(gripServo, armServo);
   
 }
 
@@ -200,6 +196,9 @@ void DropOffBlock(int location){
     LeftMotor->setSpeed(0);
     RightMotor->setSpeed(0);
     }
+    lowerArm(gripServo, armServo);
+    dropBlock(gripServo, armServo);
+    liftArm(gripServo, armServo);
     SpinAround();
   // Deals with the block and returns to the start before generating the next path
   }
