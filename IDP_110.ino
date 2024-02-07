@@ -155,7 +155,6 @@ void FindBlock(){
  Serial.print(valRight);
     LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
         LeftMotor->setSpeed(valRight*200);
- //delay(1);
   } while (BlockStatus == 0); // stops when a junction is hit
 };
 
@@ -185,7 +184,6 @@ void IdentifyBlock(){
 }
 
 void DropOffBlock(int location){
-  SpinAround();
   String path = ConvertToLocalPath(GetPathToTarget(location, 12));
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
@@ -195,6 +193,9 @@ void DropOffBlock(int location){
       delay(100);
     } else if (path[i] == 'R'){
       turnRight();
+      delay(100);
+    } else if (path[i] == 'B'){
+      SpinAround();
       delay(100);
     } else {
       delay(300);
@@ -225,11 +226,11 @@ void LeaveBox(){
     RightMotor->setSpeed(100);
     } while (JunctionStatus == 0);
     JunctionStatus = 0;
-    delay(300);
+    delay(100);
 }
 void ReturnToDepo(){
-      //String path = ConvertToLocalPath(GetPathToTarget(12, 1));
-    String path = "RFRF";
+    String path = ConvertToLocalPath(GetPathToTarget(12, 0));
+    path += "C";
     //SetCurrentHeading(90);
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
@@ -285,7 +286,7 @@ void loop(){
     PickUpBlock();
     //IdentifyBlock();
     buttonPressed = false;
-    DropOffBlock(pathlist[stage]-1);
+    DropOffBlock(pathlist[stage]);
     ReturnToDepo();
     stage += 1;
   }
