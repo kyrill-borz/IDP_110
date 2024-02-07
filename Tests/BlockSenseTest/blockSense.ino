@@ -22,7 +22,7 @@ void setup() {
 
 bool senseBlockIR(){ //sensing block distance using IR
     float blockDistIR = sensor.getDistance();
-    if(blockDist > 80){
+    if(blockDistIR > 80){
         return 0;
     }
     else{
@@ -45,9 +45,9 @@ bool senseBlockUS(){ //sensing block using ultrasound
 bool blockTypeIR(){//determing block type using IR
     float blockTypeDist = sensor.getDistance();
     if(blockTypeDist < 60){ //calibrate threshold for block identification
-        return 1 //return 1 for a solid block
+        return 1; //return 1 for a solid block
     }
     else{
-        return 0 //return 0 for a foam block
+        return 0; //return 0 for a foam block
     }
 }
