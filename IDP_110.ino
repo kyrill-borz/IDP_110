@@ -14,12 +14,12 @@ DFRobot_VL53L0X sensor;
 // ######################################### SETUP #################################
 
 // Calibrate input pins
-int leftlinesensorPin = 9;
+int leftlinesensorPin = 5;
 int rightlinesensorPin = 8; 
-int leftjunctionsensorPin = 10;
+int leftjunctionsensorPin = 6;//10;
 int rightjunctionsensorPin = 7;
 int crashswitchPin = 3; 
-int pushButton = 5;
+int pushButton = 4;
 
 // Store variables for turning
 int turningLeft;
@@ -37,6 +37,7 @@ Adafruit_DCMotor *LeftMotor = AFMS.getMotor(1);
 Adafruit_DCMotor *RightMotor = AFMS.getMotor(2);
 
 Servo armServo; // create servo object to control a servo
+Servo gripServo;
 
 void setup() {
  
@@ -63,6 +64,7 @@ void setup() {
  pinMode(crashswitchPin, INPUT);
  pinMode(pushButton, INPUT);
  armServo.attach(9); // attaches the servo on pin 9 to the servo object
+ gripServo.attach(10);
  attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
  attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
