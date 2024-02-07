@@ -4,7 +4,7 @@
 #include "Pathfinding/pathfinding.hpp"
 #include "PinDefinitions/pindefinitions.hpp"
 #include "Grabbing/grabbing.hpp"
-//#include "LEDs/LEDs.hpp"
+#include "LEDs/LEDs.hpp"
 #include "Wire.h"
 #include "DFRobot_VL53L0X.h"
 

@@ -7,7 +7,7 @@ void displayBlockType(bool isFoam, int greenLedPin, int redLedPin){ //turn green
     else{
         displayLED = redLedPin;
     }
-    digitalWrite(displayLED,HIGH);
+    digitalWrite(displayLED,1);
 }
 
 void resetLED(int greenLedPin,int redLedPin){ //turn off LEDs after being dropped off
@@ -16,6 +16,7 @@ void resetLED(int greenLedPin,int redLedPin){ //turn off LEDs after being droppe
 }
 
 void flashLED(int blueLedPin){ //flash LED while moving
+    Serial.print("flashing");
     digitalWrite(blueLedPin,HIGH);
     delay(500);
     digitalWrite(blueLedPin,LOW);
