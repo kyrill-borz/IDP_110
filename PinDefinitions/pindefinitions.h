@@ -7,6 +7,10 @@ const int leftjunctionsensorPin;
 const int rightjunctionsensorPin;
 const int crashswitchPin; 
 const int pushButton;
-const int ledPin;
+const int blueLedPin;
+const int greenLedPin;
+const int redLedPin;
+const int armPin;
+const int grabberPin;
 
 #endif
