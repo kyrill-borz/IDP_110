@@ -1,20 +1,21 @@
 
-void displayBlockType(bool isFoam){ //turn green LED on for foam, red LED on for solid
+void displayBlockType(bool isFoam, int greenLedPin, int redLedPin){ //turn green LED on for foam, red LED on for solid
+    int displayLED;
     if(isFoam){
-        int displayLED = greenLedPin;
+        displayLED = greenLedPin;
     }
     else{
-        int displayLED = redLedPin;
+        displayLED = redLedPin;
     }
     digitalWrite(displayLED,HIGH);
 }
 
-void resetLED(greenLedPin,redLedPin){ //turn off LEDs after being dropped off
+void resetLED(int greenLedPin,int redLedPin){ //turn off LEDs after being dropped off
     digitalWrite(greenLedPin,LOW);
     digitalWrite(redLedPin,LOW);
 }
 
-void flashLED(blueLedPin){ //flash LED while moving
+void flashLED(int blueLedPin){ //flash LED while moving
     digitalWrite(blueLedPin,HIGH);
     delay(500);
     digitalWrite(blueLedPin,LOW);
