@@ -131,6 +131,21 @@ String GetPathToTarget(int startIndex, int endIndex) { // get the world space pa
     }
   }
 }
+void SetCurrentHeading(int heading) {
+  currentHeading = heading;
+  currentHeading = heading%360;
+  if (abs(currentHeading) > 180) {currentHeading = currentHeading-(360 * (heading/abs(heading)));}
+}
+
+void SetHeadingFromPath(String path) { // set the final heading following a path
+    // set the new current heading
+  for (int i = 0; i < path.length(); i++) {
+    if (path[i] == 'L') {SetCurrentHeading(currentHeading - 90);}
+    else if (path[i] == 'R') {SetCurrentHeading(currentHeading + 90);}
+    else if (path[i] == 'B') {SetCurrentHeading(currentHeading + 180);}
+  }
+}
+
 String ConvertToLocalPath(String path) { // convert the path from world to local space
   // loop over the path
   int current = currentHeading;
@@ -157,20 +172,6 @@ String ConvertToLocalPath(String path) { // convert the path from world to local
   
   SetHeadingFromPath(LRC);
   return LRC;
-}
-void SetCurrentHeading(int heading) {
-  currentHeading = heading;
-  currentHeading = heading%360;
-  if (abs(currentHeading) > 180) {currentHeading = currentHeading-(360 * (heading/abs(heading)));}
-}
-
-void SetHeadingFromPath(String path) { // set the final heading following a path
-    // set the new current heading
-  for (int i = 0; i < path.length(); i++) {
-    if (path[i] == 'L') {SetCurrentHeading(currentHeading - 90);}
-    else if (path[i] == 'R') {SetCurrentHeading(currentHeading + 90);}
-    else if (path[i] == 'B') {SetCurrentHeading(currentHeading + 180);}
-  }
 }
 
 
