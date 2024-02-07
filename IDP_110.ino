@@ -231,7 +231,6 @@ void LeaveBox(){
 void ReturnToDepo(){
     String path = ConvertToLocalPath(GetPathToTarget(12, 0));
     path += "C";
-    //SetCurrentHeading(90);
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
@@ -261,7 +260,6 @@ void loop(){
   if (buttonPressed) { 
     LeaveBox();
     String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
-    SetCurrentHeading(180);
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
