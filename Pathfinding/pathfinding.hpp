@@ -155,6 +155,7 @@ String ConvertToLocalPath(String path) { // convert the path from world to local
     current = targetAngle;
   }
   
+  SetHeadingFromPath(LRC);
   return LRC;
 }
 
@@ -173,14 +174,15 @@ void SetCurrentHeading(int heading) { // set the current heading
 }
 // -- End Of Pathfinding Stuff 
 
-// void setup() 
-// {
-//   // Serial init
-//   Serial.begin(9600);
-//   Serial.println(ConvertToLocalPath(GetPathToTarget(0, 9)));
-//   SetCurrentHeading(180);
-//   Serial.println(ConvertToLocalPath(GetPathToTarget(9, 13)));
+//void setup() 
+//{
+   // Serial init
+//  Serial.begin(9600);
+//  Serial.println(ConvertToLocalPath(GetPathToTarget(0, 3)));
+//  Serial.println(ConvertToLocalPath(GetPathToTarget(3, 12)));
+//  Serial.println(ConvertToLocalPath(GetPathToTarget(12, 9)));
+//  Serial.println(ConvertToLocalPath(GetPathToTarget(9, 12)));
+//  Serial.println(ConvertToLocalPath(GetPathToTarget(12, 0)));
 // }
-// void loop(){}
-
+// void loop() {}
 
