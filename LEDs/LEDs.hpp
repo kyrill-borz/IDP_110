@@ -16,10 +16,6 @@ void resetLED(int greenLedPin,int redLedPin){ //turn off LEDs after being droppe
 }
 
 void flashLED(int blueLedPin){ //flash LED while moving
-    Serial.print("flashing");
-    digitalWrite(blueLedPin,HIGH);
-    delay(500);
-    digitalWrite(blueLedPin,LOW);
-    delay(500);
+    digitalWrite(blueLedPin, (millis() / 1000) % 2);;
 }
 

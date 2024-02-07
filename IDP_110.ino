@@ -123,7 +123,9 @@ void stopRightTurn(){
 void MoveToNextJunction(){
   do {
     JunctionStatus = JunctionSense();
+    flashLED(blueLedPin);
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
+  
  Serial.print(valLeft);
  RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
     RightMotor->setSpeed(valLeft*200);
@@ -141,6 +143,7 @@ void MoveToNextJunction(){
 void FindBlock(){
   do {
   BlockStatus = senseBlock();
+  flashLED(blueLedPin);
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
   Serial.print(valLeft);
   RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
@@ -198,6 +201,7 @@ void DropOffBlock(int location){
     }
     lowerArm(gripServo, armServo);
     dropBlock(gripServo, armServo);
+    resetLED(greenLedPin, redLedPin);
     liftArm(gripServo, armServo);
     SpinAround();
   // Deals with the block and returns to the start before generating the next path
@@ -207,8 +211,8 @@ void EnterDepo(){
   LeftMotor->run(FORWARD);
   RightMotor->run(FORWARD);
   LeftMotor->setSpeed(100);
-  RightMotor->setSpeed(100);
-  delay(2000);
+  RightMotor->setSpeed(200);
+  delay(4000);
   LeftMotor->setSpeed(0);
   RightMotor->setSpeed(0);
 
