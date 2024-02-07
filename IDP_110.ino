@@ -4,6 +4,7 @@
 #include "Pathfinding/pathfinding.hpp"
 #include "PinDefinitions/pindefinitions.hpp"
 #include "Grabbing/grabbing.hpp"
+#include "BlockSense/blockSense.hpp"
 #include "LEDs/LEDs.hpp"
 #include "Wire.h"
 #include "DFRobot_VL53L0X.h"
@@ -23,6 +24,7 @@ int JunctionStatus = 0;
 int BlockStatus = 0;
 int pathlist[] = {3,9};
 int stage = 0;
+int isFoam;
 // Variable to check if button has been pressed
 bool buttonPressed = false;
 
@@ -72,9 +74,6 @@ int JunctionSense(){
   return Junct;
 }
 
-int BlockSense(){
-  return 1;
-}
 void SwitchButtonState(){
   buttonPressed = not buttonPressed;
 }
@@ -176,11 +175,18 @@ void SpinAround(){
   turnRight();
 }
 void IdentifyBlock(){
-  
+  isFoam = blockTypeIR(sensor);
+  displayBlockType(isFoam, greenLedPin, redLedPin);
 }
 
 void DropOffBlock(int location){
-  String path = ConvertToLocalPath(GetPathToTarget(location, 12));
+  int deliveryLocation;
+  if (isFoam == 1){
+    deliveryLocation = 12;
+  } else {
+    deliveryLocation = 13;
+  }
+  String path = ConvertToLocalPath(GetPathToTarget(location, deliveryLocation));
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
@@ -229,7 +235,13 @@ void LeaveBox(){
     delay(100);
 }
 void ReturnToDepo(){
-    String path = ConvertToLocalPath(GetPathToTarget(12, 0));
+    int deliveryLocation;
+    if (isFoam == 1){
+      deliveryLocation = 12;
+    } else {
+      deliveryLocation = 13;
+    }
+    String path = ConvertToLocalPath(GetPathToTarget(deliveryLocation, 0));
     path += "C";
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
@@ -282,7 +294,7 @@ void loop(){
   // Deals with the block and returns to the start before generating the next path
     FindBlock();
     PickUpBlock();
-    //IdentifyBlock();
+    IdentifyBlock();
     buttonPressed = false;
     DropOffBlock(pathlist[stage]);
     ReturnToDepo();
