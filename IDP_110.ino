@@ -2,6 +2,9 @@
 #include <Servo.h>
 #include <stdlib.h>
 #include "Pathfinding/pathfinding.hpp"
+#include "PinDefinitions/pindefinitions.hpp"
+#include "Grabbing/grabbing.hpp"
+#include "LEDs/LEDs.hpp"
 #include "Wire.h"
 #include "DFRobot_VL53L0X.h"
 
@@ -12,14 +15,6 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
 DFRobot_VL53L0X sensor;
 // ######################################### SETUP #################################
-
-// Calibrate input pins
-int leftlinesensorPin = 5;
-int rightlinesensorPin = 8; 
-int leftjunctionsensorPin = 6;//10;
-int rightjunctionsensorPin = 7;
-int crashswitchPin = 3; 
-int pushButton = 4;
 
 // Store variables for turning
 int turningLeft;
@@ -63,8 +58,8 @@ void setup() {
  pinMode(rightjunctionsensorPin, INPUT);
  pinMode(crashswitchPin, INPUT);
  pinMode(pushButton, INPUT);
- armServo.attach(9); // attaches the servo on pin 9 to the servo object
- gripServo.attach(10);
+ armServo.attach(armPin); // attaches the servo on pin 9 to the servo object
+ gripServo.attach(grabberPin);
  attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
  attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
@@ -258,8 +253,8 @@ void loop(){
   attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
   attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
   attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
-
   if (buttonPressed) { 
+    Serial.print("Starting");
     LeaveBox();
     String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
     int directionsLength = path.length(); //path.size();
