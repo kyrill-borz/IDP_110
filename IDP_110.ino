@@ -84,7 +84,7 @@ void SwitchButtonState(){
   buttonPressed = not buttonPressed;
 }
 
-bool senseBlock(){ //
+int senseBlock(){ //
     float blockDist = sensor.getDistance();
     if(blockDist > 100){
         return 0;
