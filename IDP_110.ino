@@ -154,21 +154,21 @@ void FindBlock(){
 };
 
 void PickUpBlock(){
-  delay(100);
-  // LeftMotor->setSpeed(0);
-  // RightMotor->setSpeed(0);
-  // //lowerArm(gripServo, armServo);
-  // grabBlock(gripServo, armServo);
-  // liftArm(gripServo, armServo);
+  LeftMotor->setSpeed(0);
+  RightMotor->setSpeed(0);
+  lowerArm(gripServo, armServo);
+  grabBlock(gripServo, armServo);
+  liftArm(gripServo, armServo);
+  delay(5000);
 }
 
 void PutDownBlock(){
-  // LeftMotor->setSpeed(0);
-  // RightMotor->setSpeed(0);  
-  // lowerArm(gripServo, armServo);
-  // dropBlock(gripServo, armServo);
-  // resetLED(greenLedPin, redLedPin);
-  // liftArm(gripServo, armServo);
+  LeftMotor->setSpeed(0);
+  RightMotor->setSpeed(0);  
+  lowerArm(gripServo, armServo);
+  dropBlock(gripServo, armServo);
+  resetLED(greenLedPin, redLedPin);
+  liftArm(gripServo, armServo);
 }
 
 void SpinAround(){
