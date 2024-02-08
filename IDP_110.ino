@@ -268,10 +268,8 @@ void ReturnToDepo(){
 
 
 void loop(){
-  attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
-  attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
-  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
   if (buttonPressed) { 
+   attachInterrupt(digitalPinToInterrupt(pushButton),resetFunc,RISING);
     Serial.print("Starting");
     //lowerArm(gripServo, armServo);
     LeaveBox();
