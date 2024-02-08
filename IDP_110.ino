@@ -36,6 +36,8 @@ Adafruit_DCMotor *RightMotor = AFMS.getMotor(2);
 Servo armServo; // create servo object to control a servo
 Servo gripServo;
 
+void (* resetFunc) (void) = 0;
+
 void setup() {
  
   if (!AFMS.begin()) {         // create with the default frequency 1.6KHz
