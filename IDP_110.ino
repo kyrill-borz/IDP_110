@@ -63,6 +63,7 @@ void setup() {
  armServo.attach(armPin); // attaches the servo on pin 9 to the servo object
  gripServo.attach(grabberPin);
  armServo.writeMicroseconds(500);
+ gripServo.writeMicroseconds(500);
  attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
  attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
@@ -79,15 +80,6 @@ void SwitchButtonState(){
   buttonPressed = not buttonPressed;
 }
 
-int senseBlock(){ //
-    float blockDist = sensor.getDistance();
-    if(blockDist > 100){
-        return 0;
-    }
-    else{
-        return 1;
-    }
-}
 
 void turnLeft(){ //adjust turning functions to match motor orientations
   delay(200);
@@ -142,7 +134,7 @@ void MoveToNextJunction(){
 
 void FindBlock(){
   do {
-  BlockStatus = senseBlock();
+  BlockStatus = senseBlockIR(sensor);
   flashLED(blueLedPin);
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
   Serial.print(valLeft);
@@ -155,24 +147,26 @@ void FindBlock(){
  Serial.print(valRight);
     LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
         LeftMotor->setSpeed(valRight*200);
+  delay(50);
   } while (BlockStatus == 0); // stops when a junction is hit
 };
 
 void PickUpBlock(){
-  LeftMotor->setSpeed(0);
-  RightMotor->setSpeed(0);
-  lowerArm(gripServo, armServo);
-  grabBlock(gripServo, armServo);
-  liftArm(gripServo, armServo);
+  delay(100);
+  // LeftMotor->setSpeed(0);
+  // RightMotor->setSpeed(0);
+  // //lowerArm(gripServo, armServo);
+  // grabBlock(gripServo, armServo);
+  // liftArm(gripServo, armServo);
 }
 
 void PutDownBlock(){
-  LeftMotor->setSpeed(0);
-  RightMotor->setSpeed(0);  
-  lowerArm(gripServo, armServo);
-  dropBlock(gripServo, armServo);
-  resetLED(greenLedPin, redLedPin);
-  liftArm(gripServo, armServo);
+  // LeftMotor->setSpeed(0);
+  // RightMotor->setSpeed(0);  
+  // lowerArm(gripServo, armServo);
+  // dropBlock(gripServo, armServo);
+  // resetLED(greenLedPin, redLedPin);
+  // liftArm(gripServo, armServo);
 }
 
 void SpinAround(){
@@ -194,8 +188,10 @@ void DropOffBlock(int location){
     deliveryLocation = 12;
   } else {
     deliveryLocation = 13;
-  }
+  };
+  SpinAround();
   String path = ConvertToLocalPath(GetPathToTarget(location, deliveryLocation));
+  path.remove(0,1);
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
@@ -277,7 +273,7 @@ void loop(){
   attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
   if (buttonPressed) { 
     Serial.print("Starting");
-    lowerArm(gripServo, armServo);
+    //lowerArm(gripServo, armServo);
     LeaveBox();
     String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
     int directionsLength = path.length(); //path.size();

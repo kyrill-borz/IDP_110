@@ -4,7 +4,7 @@
 
 bool senseBlockIR(DFRobot_VL53L0X sensor){ //sensing block distance using IR
     float blockDistIR = sensor.getDistance();
-    if(blockDistIR > 80){
+    if(blockDistIR > 100){
         return 0;
     }
     else{
