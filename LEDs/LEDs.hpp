@@ -11,8 +11,8 @@ void displayBlockType(bool isFoam, int greenLedPin, int redLedPin){ //turn green
 }
 
 void resetLED(int greenLedPin,int redLedPin){ //turn off LEDs after being dropped off
-    digitalWrite(greenLedPin,LOW);
-    digitalWrite(redLedPin,LOW);
+    digitalWrite(greenLedPin,0);
+    digitalWrite(redLedPin,0);
 }
 
 void flashLED(int blueLedPin){ //flash LED while moving
