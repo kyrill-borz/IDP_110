@@ -12,7 +12,6 @@ bool senseBlockIR(DFRobot_VL53L0X sensor){ //sensing block distance using IR
     }
 }
 
-
 int blockTypeIR(DFRobot_VL53L0X sensor ){//determing block type using IR
     float blockTypeDist = sensor.getDistance();
     if(blockTypeDist < 60){ //calibrate threshold for block identification

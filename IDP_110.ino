@@ -23,7 +23,8 @@ DFRobot_VL53L0X sensor;
 int turningLeft;
 int turningRight;
 int JunctionStatus = 0;
-int BlockStatus = 0;
+bool BlockStatus = 0;
+int WarehouseStatus = 0;
 int pathlist[] = {3,9};
 int stage = 0;
 int isFoam;
@@ -218,6 +219,21 @@ void DropOffBlock(int location){
     SpinAround();
   // Deals with the block and returns to the start before generating the next path
   }
+
+
+void ScanForWarehouseBlock(){
+  do {
+    BlockStatus += senseBlockIR(sensor);
+    flashLED(blueLedPin);
+
+    LeftMotor->run(BACKWARD);
+    LeftMotor->setSpeed(((1 - (millis() / 2000) % 2)) * 100);
+    RightMotor->run(FORWARD);
+    RightMotor->setSpeed(((millis() / 2000) % 2) * 100);
+ //delay(1);
+  } while (BlockStatus == 0); // stops when a junction is hit
+};
+
 void EnterDepo(){
   SpinAround();
   LeftMotor->run(FORWARD);
