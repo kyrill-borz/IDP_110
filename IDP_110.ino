@@ -21,7 +21,7 @@ DFRobot_VL53L0X sensor;
 int turningLeft;
 int turningRight;
 int JunctionStatus = 0;
-int BlockStatus = 0;
+bool BlockStatus = 0;
 int pathlist[] = {3,9};
 int stage = 0;
 int isFoam;
@@ -120,14 +120,12 @@ void MoveToNextJunction(){
     flashLED(blueLedPin);
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
   
- Serial.print(valLeft);
  RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
     RightMotor->setSpeed(valLeft*200);
      // need to test if delay is necessary
 
 
  int valRight = digitalRead(rightlinesensorPin); // read right input value
- Serial.print(valRight);
     LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
         LeftMotor->setSpeed(valRight*200);
  //delay(1);
@@ -135,30 +133,34 @@ void MoveToNextJunction(){
 };
 
 void FindBlock(){
+  setServoAngle(gripServo, 50);
+  delay(2000);
   do {
   BlockStatus = senseBlockIR(sensor);
   flashLED(blueLedPin);
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
-  Serial.print(valLeft);
   RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-    RightMotor->setSpeed(valLeft*200);
+    RightMotor->setSpeed(valLeft*100);
      // need to test if delay is necessary
 
 
  int valRight = digitalRead(rightlinesensorPin); // read right input value
- Serial.print(valRight);
     LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-        LeftMotor->setSpeed(valRight*200);
+        LeftMotor->setSpeed(valRight*100);
   delay(50);
   } while (BlockStatus == 0); // stops when a junction is hit
 };
 
 void PickUpBlock(){
+  setServoAngle(gripServo, 50);
+  delay(1000);
   LeftMotor->setSpeed(0);
   RightMotor->setSpeed(0);
-  lowerArm(gripServo, armServo);
-  grabBlock(gripServo, armServo);
-  liftArm(gripServo, armServo);
+  setServoAngle(armServo, 0);
+  delay(1000);
+  setServoAngle(gripServo, 0, 4);
+  delay(1000);
+  setServoAngle(armServo, 30);
   IdentifyBlock();
   delay(5000);
 }
@@ -166,10 +168,10 @@ void PickUpBlock(){
 void PutDownBlock(){
   LeftMotor->setSpeed(0);
   RightMotor->setSpeed(0);  
-  lowerArm(gripServo, armServo);
-  dropBlock(gripServo, armServo);
+  setServoAngle(gripServo, 50);
+  delay(1000);
+  setServoAngle(armServo, 30);
   resetLED(greenLedPin, redLedPin);
-  liftArm(gripServo, armServo);
 }
 
 void SpinAround(){
@@ -270,13 +272,12 @@ void ReturnToDepo(){
 }
 
 // ############################# MAIN LOOP ########################
-
+// Arm angles are 0 and 30 for down and up 
+// Grab angles are 0 50 for completely closed and open
 
 void loop(){
   if (buttonPressed) { 
-   attachInterrupt(digitalPinToInterrupt(pushButton),resetFunc,RISING);
-    Serial.print("Starting");
-    //lowerArm(gripServo, armServo);
+     Serial.print("Starting");
     
     String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
     int directionsLength = path.length(); //path.size();

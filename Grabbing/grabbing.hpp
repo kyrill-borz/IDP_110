@@ -34,13 +34,13 @@ void setServoAngle(Servo servo, int angle, int speed=10) { // pass the servo, th
     if (angle < currentAngle) {
         for (int i = currentAngle; i >= angle; i--) {
             servo.write(i);
-            delay((1/speed) * 1000);
+            delay(int((1/speed) * 1000));
         }
     }
     else if (angle > currentAngle) {
         for (int i = currentAngle; i <= angle; i++) {
             servo.write(i);
-            delay((1/speed) * 1000);
+            delay(int((1/speed) * 1000));
         }
     }
 }
