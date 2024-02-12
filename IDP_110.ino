@@ -115,19 +115,20 @@ void stopRightTurn(){
 
 
 void MoveToNextJunction(){
+  JunctionStatus = 0;
   do {
     JunctionStatus = JunctionSense();
     flashLED(blueLedPin);
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
   
  RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-    RightMotor->setSpeed(valLeft*150);
+    RightMotor->setSpeed(valLeft*200);
      // need to test if delay is necessary
 
 
  int valRight = digitalRead(rightlinesensorPin); // read right input value
     LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-        LeftMotor->setSpeed(valRight*150);
+        LeftMotor->setSpeed(valRight*200);
  //delay(1);
   } while (JunctionStatus == 0); // stops when a junction is hit
 };
@@ -274,6 +275,7 @@ void ReturnToDepo(){
     LeftMotor->setSpeed(0);
     RightMotor->setSpeed(0);
     }
+    setServoAngle(armServo, 0);
     EnterDepo();
     // lowerArm(gripServo, armServo);
 }
@@ -310,7 +312,7 @@ void loop(){
   // Deals with the block and returns to the start before generating the next path
     FindBlock();
     PickUpBlock();
-    //buttonPressed = false;
+    buttonPressed = true;
     DropOffBlock(pathlist[stage]);
     ReturnToDepo();
     stage += 1;
