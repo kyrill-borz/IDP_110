@@ -159,6 +159,7 @@ void PickUpBlock(){
   lowerArm(gripServo, armServo);
   grabBlock(gripServo, armServo);
   liftArm(gripServo, armServo);
+  IdentifyBlock();
   delay(5000);
 }
 
@@ -217,14 +218,14 @@ void DropOffBlock(int location){
   // Deals with the block and returns to the start before generating the next path
   }
 void EnterDepo(){
-  SpinAround();
-  LeftMotor->run(FORWARD);
-  RightMotor->run(FORWARD);
-  LeftMotor->setSpeed(100);
-  RightMotor->setSpeed(200);
-  delay(4000);
-  LeftMotor->setSpeed(0);
-  RightMotor->setSpeed(0);
+  //SpinAround();
+  // LeftMotor->run(FORWARD);
+  // RightMotor->run(FORWARD);
+  // LeftMotor->setSpeed(100);
+  // RightMotor->setSpeed(200);
+  // delay(100);
+  // LeftMotor->setSpeed(0);
+  // RightMotor->setSpeed(0);
 
 }
 void LeaveBox(){
@@ -246,7 +247,9 @@ void ReturnToDepo(){
       deliveryLocation = 13;
     }
     String path = ConvertToLocalPath(GetPathToTarget(deliveryLocation, 0));
-    path += "C";
+    
+    path.remove(0,1);
+    //path += "C";
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
@@ -263,7 +266,7 @@ void ReturnToDepo(){
     RightMotor->setSpeed(0);
     }
     EnterDepo();
-    lowerArm(gripServo, armServo);
+    // lowerArm(gripServo, armServo);
 }
 
 // ############################# MAIN LOOP ########################
@@ -274,9 +277,10 @@ void loop(){
    attachInterrupt(digitalPinToInterrupt(pushButton),resetFunc,RISING);
     Serial.print("Starting");
     //lowerArm(gripServo, armServo);
-    LeaveBox();
+    
     String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
     int directionsLength = path.length(); //path.size();
+    if (stage == 0){LeaveBox();};
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
     if (path[i] == 'L'){ // decides what to do at each junction
@@ -298,8 +302,7 @@ void loop(){
   // Deals with the block and returns to the start before generating the next path
     FindBlock();
     PickUpBlock();
-    IdentifyBlock();
-    buttonPressed = false;
+    //buttonPressed = false;
     DropOffBlock(pathlist[stage]);
     ReturnToDepo();
     stage += 1;
