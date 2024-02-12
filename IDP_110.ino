@@ -84,7 +84,7 @@ void SwitchButtonState(){
 
 
 void turnLeft(){ //adjust turning functions to match motor orientations
-  delay(200);
+  delay(300);
   turningLeft = 1;
   while(turningLeft == 1){ // defines a loop for turning to the left until interrupt is hit
     RightMotor->run(BACKWARD);
@@ -95,7 +95,7 @@ void turnLeft(){ //adjust turning functions to match motor orientations
 }
 
 void turnRight(){ 
-  delay(200);
+  delay(300);
   turningRight = 1;
   while(turningRight == 1){ // defines a loop for turning to the right until interrupt is hit
     LeftMotor->run(BACKWARD);
@@ -121,41 +121,43 @@ void MoveToNextJunction(){
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
   
  RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-    RightMotor->setSpeed(valLeft*200);
+    RightMotor->setSpeed(valLeft*150);
      // need to test if delay is necessary
 
 
  int valRight = digitalRead(rightlinesensorPin); // read right input value
     LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-        LeftMotor->setSpeed(valRight*200);
+        LeftMotor->setSpeed(valRight*150);
  //delay(1);
   } while (JunctionStatus == 0); // stops when a junction is hit
 };
 
 void FindBlock(){
+  LeftMotor->setSpeed(0);
+  RightMotor->setSpeed(0);
   setServoAngle(gripServo, 50);
-  delay(2000);
+  delay(100);
   do {
   BlockStatus = senseBlockIR(sensor);
   flashLED(blueLedPin);
   int valLeft = digitalRead(leftlinesensorPin); // read left input value
   RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-    RightMotor->setSpeed(valLeft*100);
+    RightMotor->setSpeed(valLeft*130);
      // need to test if delay is necessary
 
 
  int valRight = digitalRead(rightlinesensorPin); // read right input value
     LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
-        LeftMotor->setSpeed(valRight*100);
+        LeftMotor->setSpeed(valRight*130);
   delay(50);
   } while (BlockStatus == 0); // stops when a junction is hit
 };
 
 void PickUpBlock(){
-  setServoAngle(gripServo, 50);
-  delay(1000);
   LeftMotor->setSpeed(0);
   RightMotor->setSpeed(0);
+  setServoAngle(gripServo, 50);
+  delay(1000);
   setServoAngle(armServo, 0);
   delay(1000);
   setServoAngle(gripServo, 0, 4);
@@ -179,7 +181,7 @@ void SpinAround(){
   RightMotor->run(FORWARD);
   LeftMotor->setSpeed(100);
   RightMotor->setSpeed(100);
-  delay(1000);
+  delay(200);
   turnRight();
 }
 void IdentifyBlock(){
@@ -216,7 +218,12 @@ void DropOffBlock(int location){
     RightMotor->setSpeed(0);
     }
     PutDownBlock();
-    SpinAround();
+    LeftMotor->run(FORWARD);
+    RightMotor->run(FORWARD);
+    LeftMotor->setSpeed(100);
+    RightMotor->setSpeed(100);
+    delay(3000);
+    turnRight();
   // Deals with the block and returns to the start before generating the next path
   }
 void EnterDepo(){
@@ -297,8 +304,8 @@ void loop(){
     }else {
       delay(300);
     };
-    LeftMotor->setSpeed(0);
-    RightMotor->setSpeed(0);
+    // LeftMotor->setSpeed(0);
+    // RightMotor->setSpeed(0);
     }
   // Deals with the block and returns to the start before generating the next path
     FindBlock();
