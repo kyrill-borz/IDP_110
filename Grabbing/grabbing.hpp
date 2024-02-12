@@ -29,18 +29,20 @@ void lowerArm(Servo grabber,Servo arm){
 
 void setServoAngle(Servo servo, int angle, int speed=10) { // pass the servo, the target angle, and the speed in degrees per second
     int currentAngle = servo.read();
-    
+    float float_time = (1/speed) * 1000;
+    int int_time = static_cast<int>(float_time);
+
     // set the servo angle
     if (angle < currentAngle) {
         for (int i = currentAngle; i >= angle; i--) {
             servo.write(i);
-            delay(int((1/speed) * 1000));
+            delay(int_time);
         }
     }
     else if (angle > currentAngle) {
         for (int i = currentAngle; i <= angle; i++) {
             servo.write(i);
-            delay(int((1/speed) * 1000));
+            delay(int_time);
         }
     }
 }
