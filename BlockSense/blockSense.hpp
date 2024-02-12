@@ -10,7 +10,7 @@ float blockDistIRAv = 200;
     delay(20);
     }    ;
     Serial.print(blockDistIRAv);
-    if(blockDistIRAv > 110){
+    if(blockDistIRAv > 105){//100,100
         return 0;
     }
     else{
@@ -21,7 +21,7 @@ float blockDistIRAv = 200;
 
 int blockTypeIR(DFRobot_VL53L0X sensor ){//determing block type using IR
     float blockTypeDist = sensor.getDistance();
-    if(blockTypeDist < 105){ //calibrate threshold for block identification
+    if(blockTypeDist < 95){ // 95 is good distance to differentiate blocks
         return 0; //return 0 for a solid block
     }
     else{
