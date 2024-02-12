@@ -20,7 +20,7 @@ float blockDistIRAv = 200;
 
 int blockTypeIR(DFRobot_VL53L0X sensor ){//determing block type using IR
     float blockTypeDist = sensor.getDistance();
-    if(blockTypeDist < 95){ // 95 is good distance to differentiate blocks
+    if(blockTypeDist < 100){ // 95 is good distance to differentiate blocks
         return 0; //return 0 for a solid block
     }
     else{
