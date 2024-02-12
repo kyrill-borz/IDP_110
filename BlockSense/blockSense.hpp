@@ -7,7 +7,6 @@ float blockDistIRAv = 200;
     float blockDistIR = sensor.getDistance();
     if(blockDistIR >= 10.0){
         blockDistIRAv = blockDistIR;
-    delay(20);
     }    ;
     Serial.print(blockDistIRAv);
     if(blockDistIRAv > 105){//100,100
