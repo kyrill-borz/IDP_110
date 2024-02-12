@@ -22,7 +22,7 @@ int turningLeft;
 int turningRight;
 int JunctionStatus = 0;
 bool BlockStatus = 0;
-int pathlist[] = {3,9};
+int pathlist[] = {3,9, 7, 11};
 int stage = 0;
 int isFoam;
 // Variable to check if button has been pressed
@@ -228,16 +228,21 @@ void DropOffBlock(int location){
   // Deals with the block and returns to the start before generating the next path
   }
 void EnterDepo(){
-  //SpinAround();
-  // LeftMotor->run(FORWARD);
-  // RightMotor->run(FORWARD);
-  // LeftMotor->setSpeed(100);
-  // RightMotor->setSpeed(200);
-  // delay(100);
-  // LeftMotor->setSpeed(0);
-  // RightMotor->setSpeed(0);
-
 }
+
+void ScanForWarehouseBlock(){
+  do {
+    BlockStatus += senseBlockIR(sensor);
+    flashLED(blueLedPin);
+
+    LeftMotor->run(BACKWARD);
+    LeftMotor->setSpeed(((1 - (millis() / 2000) % 2)) * 100);
+    RightMotor->run(FORWARD);
+    RightMotor->setSpeed(((millis() / 2000) % 2) * 100);
+ //delay(1);
+  } while (BlockStatus == 0); // stops when a junction is hit
+};
+
 void LeaveBox(){
     do {
     JunctionStatus = JunctionSense();
@@ -277,16 +282,54 @@ void ReturnToDepo(){
     }
     setServoAngle(armServo, 0);
     EnterDepo();
-    // lowerArm(gripServo, armServo);
 }
 
+void enterWarehouse(int stage){
+  int time_taken = 0;
+  do {
+  flashLED(blueLedPin);
+  int valLeft = digitalRead(leftlinesensorPin); // read left input value
+  RightMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
+    RightMotor->setSpeed(valLeft*130);
+     // need to test if delay is necessary
+
+
+ int valRight = digitalRead(rightlinesensorPin); // read right input value
+    LeftMotor->run(BACKWARD); // if left sensor is on the white line, turn the right wheel on
+        LeftMotor->setSpeed(valRight*130);
+  delay(50);
+  time_taken += 50;
+  } while (time_taken <= 5000); // stops when a junction is hit
+  if (stage == 2) {
+      int time_taken_turn = 0;
+      while(time_taken_turn<= 1000){ // defines a loop for turning to the left until interrupt is hit
+    RightMotor->run(BACKWARD);
+    RightMotor->setSpeed(200);
+    LeftMotor->run(FORWARD);
+    LeftMotor->setSpeed(200);
+    time_taken_turn += 50;
+    delay(50);
+  }
+  } else {
+      int time_taken_turn = 0;
+      while(time_taken_turn<= 1000){ // defines a loop for turning to the left until interrupt is hit
+    RightMotor->run(FORWARD);
+    RightMotor->setSpeed(200);
+    LeftMotor->run(BACKWARD);
+    LeftMotor->setSpeed(200);
+    time_taken_turn += 50;
+    delay(50);
+  }
+  }
+}
 // ############################# MAIN LOOP ########################
 // Arm angles are 0 and 30 for down and up 
 // Grab angles are 0 50 for completely closed and open
 
 void loop(){
   if (buttonPressed) { 
-     Serial.print("Starting");
+     if(stage<=1){
+      Serial.print("Starting");
     
     String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
     int directionsLength = path.length(); //path.size();
@@ -316,5 +359,28 @@ void loop(){
     DropOffBlock(pathlist[stage]);
     ReturnToDepo();
     stage += 1;
-  }
+     } else {
+      String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
+    int directionsLength = path.length(); //path.size();
+    for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
+      MoveToNextJunction(); // follows the line to next junction
+    if (path[i] == 'L'){ // decides what to do at each junction
+      turnLeft();
+      delay(100);
+    } else if (path[i] == 'R'){
+      turnRight();
+      delay(100);
+    } else if (path[i] == 'B')
+    {
+      SpinAround();
+      delay(100);
+    }else {
+      delay(300);
+    };
+    turnRight();
+    enterWarehouse(stage);
+    ScanForWarehouseBlock();
+    PickUpBlock();
+
+     }}}
 };
