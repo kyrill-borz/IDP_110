@@ -349,8 +349,6 @@ void loop(){
     }else {
       delay(300);
     };
-    // LeftMotor->setSpeed(0);
-    // RightMotor->setSpeed(0);
     }
   // Deals with the block and returns to the start before generating the next path
     FindBlock();
@@ -372,7 +370,7 @@ void loop(){
       delay(100);
     } else if (path[i] == 'B')
     {
-      SpinAround();
+      SpinAround(); 
       delay(100);
     }else {
       delay(300);
@@ -381,6 +379,17 @@ void loop(){
     enterWarehouse(stage);
     ScanForWarehouseBlock();
     PickUpBlock();
-
+      int time_taken_turn = 0;
+      while(time_taken_turn<= 1000){ // defines a loop for turning to the left until interrupt is hit
+    RightMotor->run(BACKWARD);
+    RightMotor->setSpeed(200);
+    LeftMotor->run(FORWARD);
+    LeftMotor->setSpeed(200);
+    time_taken_turn += 50;
+    delay(50);
+    }
+    LeaveBox();
+    DropOffBlock(7);
+    ReturnToDepo();
      }}}
 };
