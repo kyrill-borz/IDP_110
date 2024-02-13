@@ -237,9 +237,9 @@ void ScanForWarehouseBlock(){
     flashLED(blueLedPin);
 
     LeftMotor->run(BACKWARD);
-    LeftMotor->setSpeed(int(((1 - (millis() / 2000) % 2)) * 100));
+    LeftMotor->setSpeed(int(((1 - (millis() / 2000) % 2)) * 120));
     RightMotor->run(BACKWARD);
-    RightMotor->setSpeed(int(((millis() / 2000) % 2) * 200));
+    RightMotor->setSpeed(int(((millis() / 2000) % 2) * 120));
  //delay(1);
   } while (BlockStatus == 0); // stops when a junction is hit
 };
