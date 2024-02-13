@@ -231,14 +231,15 @@ void EnterDepo(){
 }
 
 void ScanForWarehouseBlock(){
+  setServoAngle(gripServo, 50);
   do {
     BlockStatus += senseBlockIR(sensor);
     flashLED(blueLedPin);
 
     LeftMotor->run(BACKWARD);
-    LeftMotor->setSpeed(((1 - (millis() / 2000) % 2)) * 100);
-    RightMotor->run(FORWARD);
-    RightMotor->setSpeed(((millis() / 2000) % 2) * 100);
+    LeftMotor->setSpeed(int(((1 - (millis() / 2000) % 2)) * 100));
+    RightMotor->run(BACKWARD);
+    RightMotor->setSpeed(int(((millis() / 2000) % 2) * 200));
  //delay(1);
   } while (BlockStatus == 0); // stops when a junction is hit
 };
@@ -299,10 +300,10 @@ void enterWarehouse(int stage){
         LeftMotor->setSpeed(valRight*130);
   delay(50);
   time_taken += 50;
-  } while (time_taken <= 5000); // stops when a junction is hit
+  } while (time_taken <= 3700); // stops when a junction is hit
   if (stage == 2) {
       int time_taken_turn = 0;
-      while(time_taken_turn<= 1000){ // defines a loop for turning to the left until interrupt is hit
+      while(time_taken_turn<= 700){ // defines a loop for turning to the left until interrupt is hit
     RightMotor->run(BACKWARD);
     RightMotor->setSpeed(200);
     LeftMotor->run(FORWARD);
@@ -328,6 +329,7 @@ void enterWarehouse(int stage){
 
 void loop(){
   if (buttonPressed) { 
+    int stage = 2;
      if(stage<=1){
       Serial.print("Starting");
     
@@ -358,9 +360,13 @@ void loop(){
     ReturnToDepo();
     stage += 1;
      } else {
+
       String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
+      path.remove(0,1);
+      path += "L";
+      Serial.print(path);
     int directionsLength = path.length(); //path.size();
-    for (int i = 0; i <= directionsLength; i++){ //Loops through each direction until the block is reached
+    for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
       MoveToNextJunction(); // follows the line to next junction
     if (path[i] == 'L'){ // decides what to do at each junction
       turnLeft();
@@ -374,8 +380,7 @@ void loop(){
       delay(100);
     }else {
       delay(300);
-    };
-    turnRight();
+    };}
     enterWarehouse(stage);
     ScanForWarehouseBlock();
     PickUpBlock();
@@ -391,5 +396,6 @@ void loop(){
     LeaveBox();
     DropOffBlock(7);
     ReturnToDepo();
-     }}}
+    stage+=1;
+     }}
 };
