@@ -223,7 +223,7 @@ void DropOffBlock(int location){
     RightMotor->run(FORWARD);
     LeftMotor->setSpeed(100);
     RightMotor->setSpeed(100);
-    delay(3000);
+    delay(1500);
     turnRight();
   // Deals with the block and returns to the start before generating the next path
   }
@@ -231,15 +231,26 @@ void EnterDepo(){
 }
 
 void ScanForWarehouseBlock(){
-  setServoAngle(gripServo, 50);
+  setServoAngle(gripServo, 20);
   do {
     BlockStatus += senseBlockIR(sensor);
     flashLED(blueLedPin);
-
+     int left_motor_value = int(((0.75 - (millis() / 1000) % 2)) * 5);
+     if (left_motor_value >= 0 ){
     LeftMotor->run(BACKWARD);
-    LeftMotor->setSpeed(int(((1 - (millis() / 2000) % 2)) * 120));
+    LeftMotor->setSpeed(3+left_motor_value);
+    } else {
+      LeftMotor->run(FORWARD);
+    LeftMotor->setSpeed(3-left_motor_value);
+    }
+    int right_motor_value = int((((millis() / 1000) % 2) - 0.25) * 5);
+     if (right_motor_value >= 0 ){
     RightMotor->run(BACKWARD);
-    RightMotor->setSpeed(int(((millis() / 2000) % 2) * 120));
+    RightMotor->setSpeed(3+right_motor_value);
+    } else {
+      RightMotor->run(FORWARD);
+    RightMotor->setSpeed(3-right_motor_value);
+    };
  //delay(1);
   } while (BlockStatus == 0); // stops when a junction is hit
 };
@@ -328,8 +339,8 @@ void enterWarehouse(int stage){
 // Grab angles are 0 50 for completely closed and open
 
 void loop(){
+  stage = 2;
   if (buttonPressed) { 
-    int stage = 2;
      if(stage<=1){
       Serial.print("Starting");
     
@@ -363,7 +374,8 @@ void loop(){
 
       String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
       path.remove(0,1);
-      path += "L";
+      MoveToNextJunction();
+      path = "B" + path + "L";
       Serial.print(path);
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
@@ -385,7 +397,7 @@ void loop(){
     ScanForWarehouseBlock();
     PickUpBlock();
       int time_taken_turn = 0;
-      while(time_taken_turn<= 1000){ // defines a loop for turning to the left until interrupt is hit
+      while(time_taken_turn<= 1500){ // defines a loop for turning to the left until interrupt is hit
     RightMotor->run(BACKWARD);
     RightMotor->setSpeed(200);
     LeftMotor->run(FORWARD);
@@ -394,7 +406,10 @@ void loop(){
     delay(50);
     }
     LeaveBox();
-    DropOffBlock(7);
+    delay(300);
+    turnLeft();
+    MoveToNextJunction();
+    DropOffBlock(11);
     ReturnToDepo();
     stage+=1;
      }}
