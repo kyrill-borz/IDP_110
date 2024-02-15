@@ -69,6 +69,7 @@ void setup() {
  attachInterrupt(digitalPinToInterrupt(rightlinesensorPin),stopRightTurn,RISING); //interrupts triggered by front line sensors to stop turning
  attachInterrupt(digitalPinToInterrupt(leftlinesensorPin),stopLeftTurn,RISING);
  attachInterrupt(digitalPinToInterrupt(pushButton),SwitchButtonState,RISING);
+ setServoAngle(armServo, 30);
 }
 
 // ############################################ FUNCTIONS ###########################
@@ -231,26 +232,28 @@ void EnterDepo(){
 }
 
 void ScanForWarehouseBlock(){
-  setServoAngle(gripServo, 20);
+  setServoAngle(gripServo, 40);
+  Serial.print("Scanning");
+  BlockStatus = 0;
   do {
     BlockStatus += senseBlockIR(sensor);
     flashLED(blueLedPin);
-     int left_motor_value = int(((0.75 - (millis() / 1000) % 2)) * 5);
-     if (left_motor_value >= 0 ){
-    LeftMotor->run(BACKWARD);
-    LeftMotor->setSpeed(3+left_motor_value);
-    } else {
+     int left_motor_value = ((((millis() / 1000) % 2)+0.4) * 100);
+     if (left_motor_value > 1){
+      LeftMotor->run(BACKWARD);
+     } else {
       LeftMotor->run(FORWARD);
-    LeftMotor->setSpeed(3-left_motor_value);
-    }
-    int right_motor_value = int((((millis() / 1000) % 2) - 0.25) * 5);
-     if (right_motor_value >= 0 ){
+     }
+    
+    LeftMotor->setSpeed(left_motor_value);
+    
+    int right_motor_value = (((1.4-(millis() / 1000) % 2)) * 120);
+    if (right_motor_value > 1){
     RightMotor->run(BACKWARD);
-    RightMotor->setSpeed(3+right_motor_value);
-    } else {
+    } else{
       RightMotor->run(FORWARD);
-    RightMotor->setSpeed(3-right_motor_value);
-    };
+    }
+    RightMotor->setSpeed(right_motor_value);
  //delay(1);
   } while (BlockStatus == 0); // stops when a junction is hit
 };
@@ -260,8 +263,8 @@ void LeaveBox(){
     JunctionStatus = JunctionSense();
     LeftMotor->run(BACKWARD);
     RightMotor->run(BACKWARD);
-    LeftMotor->setSpeed(100);
-    RightMotor->setSpeed(100);
+    LeftMotor->setSpeed(130);
+    RightMotor->setSpeed(130);
     } while (JunctionStatus == 0);
     JunctionStatus = 0;
     delay(100);
@@ -311,7 +314,7 @@ void enterWarehouse(int stage){
         LeftMotor->setSpeed(valRight*130);
   delay(50);
   time_taken += 50;
-  } while (time_taken <= 3700); // stops when a junction is hit
+  } while (time_taken <= 4300); // stops when a junction is hit
   if (stage == 2) {
       int time_taken_turn = 0;
       while(time_taken_turn<= 700){ // defines a loop for turning to the left until interrupt is hit
@@ -324,7 +327,7 @@ void enterWarehouse(int stage){
   }
   } else {
       int time_taken_turn = 0;
-      while(time_taken_turn<= 1000){ // defines a loop for turning to the left until interrupt is hit
+      while(time_taken_turn<= 700){ // defines a loop for turning to the left until interrupt is hit
     RightMotor->run(FORWARD);
     RightMotor->setSpeed(200);
     LeftMotor->run(BACKWARD);
@@ -339,10 +342,10 @@ void enterWarehouse(int stage){
 // Grab angles are 0 50 for completely closed and open
 
 void loop(){
-  stage = 2;
   if (buttonPressed) { 
      if(stage<=1){
       Serial.print("Starting");
+      setServoAngle(armServo, 0);
     
     String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
     int directionsLength = path.length(); //path.size();
@@ -375,7 +378,11 @@ void loop(){
       String path = ConvertToLocalPath(GetPathToTarget(0, pathlist[stage]));
       path.remove(0,1);
       MoveToNextJunction();
+      if (stage == 2){
       path = "B" + path + "L";
+      } else {
+        path = "B" + path + "R";
+      }
       Serial.print(path);
     int directionsLength = path.length(); //path.size();
     for (int i = 0; i <= directionsLength-1; i++){ //Loops through each direction until the block is reached
@@ -397,7 +404,7 @@ void loop(){
     ScanForWarehouseBlock();
     PickUpBlock();
       int time_taken_turn = 0;
-      while(time_taken_turn<= 1500){ // defines a loop for turning to the left until interrupt is hit
+    while(time_taken_turn<= 1500){ 
     RightMotor->run(BACKWARD);
     RightMotor->setSpeed(200);
     LeftMotor->run(FORWARD);
@@ -406,7 +413,7 @@ void loop(){
     delay(50);
     }
     LeaveBox();
-    delay(300);
+    delay(800);
     turnLeft();
     MoveToNextJunction();
     DropOffBlock(11);
